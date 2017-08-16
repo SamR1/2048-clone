@@ -1,5 +1,9 @@
 (function ( $ ) {
 
+	// //for test only !!!
+	// var winValue = [2, 2, 2, 2, 2, 2048];
+	// //for test only !!!
+
 	var gradient = {
 		"0":    "#cdcdcd",
 		"2":    "#d2e4de",
@@ -14,6 +18,8 @@
 		"1024": "#648479",
 		"2048": "#475e57"
 	};
+
+	var isGameWon = false; 
  	
  	$.fn.initPage    = function(){
 
@@ -138,6 +144,10 @@
 
  	$.fn.moveCells   = function(key){
 
+ 		if (isGameWon) {
+ 			return this;
+ 		}		
+
 		var initRow  = 0;
 		var initCol  = 0;
 		var offset   = 0;
@@ -218,14 +228,37 @@
 								$(".row-" + nextRow + " .col-" + nextCol).addClass("merged");
 							} 
 
-							$(".row-" + nextRow + " .col-" + nextCol).text(
-								currentCellValue + newCellValue
-								).colorCell();
+							newCellValue = currentCellValue + newCellValue;
 
-							$(".row-" + currentRow + " .col-" + currentCol).text(0).colorCell();
+							// // for test only !!!
+							// var index = Math.floor(Math.random() * 6);
+							// if (winValue[index] == 2048) {
+							// 	newCellValue = 2048;
+							// }
+							// // for test only !!!
 
+							$(".row-" + nextRow + " .col-" + nextCol).text(newCellValue);
 
+							if ( newCellValue == 2048 ) {
 
+						 		if ( $(".square td").text() != "0" ) {
+							 		$("this").css({ 
+							 			"background-color": "#2d2d2d", 
+							 			"color": "#ffffff"
+							 		});
+						 		}
+						 		$(".row-" + nextRow + " .col-" + nextCol).css({ 
+						 			"background-color": "#ffffff", 
+						 			"color": "#2d2d2d"
+						 		});
+								isGameWon = true;
+								alert("You win!");
+								return this;
+							}
+							else {
+								$(".row-" + nextRow + " .col-" + nextCol).colorCell();
+								$(".row-" + currentRow + " .col-" + currentCol).text(0).colorCell();								
+							}
 		 	    		}  		
 		 	    	}
 
@@ -266,6 +299,7 @@
  		});
  		$("#currentScore").text(0);
 		$("#squaret").initSquare();
+		isGameWon = false;
 
  		return this;
  	}
