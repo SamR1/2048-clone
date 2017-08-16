@@ -111,19 +111,14 @@
 
  	$.fn.colorCell   = function(withFadeIn=false){
 
-		if (withFadeIn) {
+		if (withFadeIn && this.text() != 0) {
+	
 			this.css({ "opacity": 0 });
-	 		this.css({
-	 			"background-color": gradient[this.text()],
-	 		});
-			if (this.text() == 0){
-				this.css({"color": "#cdcdcd"});
-			}
-			else{
-				this.css({"color": "#474747"});
-			}
+			this.css({
+ 				"background-color": gradient[this.text()],
+ 			});
+			this.css({"color": "#474747"});
 			this.animate({ "opacity": 1 });
-
 
 		}
 		else{
@@ -228,6 +223,7 @@
 
 		 	    	if ( currentCellValue != 0 ){
 
+		 	    		var isSameValue = false;
 		 	    		newCellValue = parseInt($(".row-" + nextRow + " .col-" + nextCol).text());
 
 	 	    		
@@ -238,6 +234,9 @@
 		 	    		   ) {
 
 							if ( currentCellValue == newCellValue ){
+
+								isSameValue = true;
+								
 								$("#currentScore").text(parseInt($("#currentScore").text()) + newCellValue * 2);
 								if ( parseInt( $("#bestScore").text()) < parseInt( $("#currentScore").text()) ){
 									$("#bestScore").text($("#currentScore").text());
@@ -256,6 +255,7 @@
 							// // for test only !!!
 
 							$(".row-" + nextRow + " .col-" + nextCol).text(newCellValue);
+							
 
 							if ( newCellValue == 2048 ) {
 
@@ -274,8 +274,17 @@
 								return this;
 							}
 							else {
-								$(".row-" + nextRow + " .col-" + nextCol).colorCell();
-								$(".row-" + currentRow + " .col-" + currentCol).text(0).colorCell();								
+								if (isSameValue){
+									$(".row-" + nextRow + " .col-" + nextCol).colorCell(true);
+								}
+								else {
+									$(".row-" + nextRow + " .col-" + nextCol).colorCell();
+								}
+								// $(".row-" + nextRow + " .col-" + nextCol).text().css({
+								// 	'transition': 'transform 1s',
+								// 	'transform': 'translate(10px, 10px)'
+								// });
+								$(".row-" + currentRow + " .col-" + currentCol).text(0).colorCell();						
 							}
 		 	    		}  		
 		 	    	}
