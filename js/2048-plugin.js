@@ -136,8 +136,6 @@
 
  	$.fn.moveCells  = function(key){
 
- 		console.log("========================================")
-
 		var initRow  = 0;
 		var initCol  = 0;
 		var offset   = 0;
@@ -173,30 +171,16 @@
  				break;
 		}
 
-		console.log("start fn");
-
-		// only one merged by col (or row) and by key pres !
-		var alreadyMerged= [false, false, false, false];
+		$(".square td").removeClass("merged");
 
 		for (k=1; k<4; k++){
 
 			var currentRow = initRow;
 			var currentCol = initCol;
-			console.log("+++++++++++++++++")
-
 
 		    for (j=1; j<5; j++){
 
-		    	
-		    	console.log("-------")
-
-
 		 	    for (i=1; i<4; i++){
-		 	    	//console.log("loop start");
-		 	    	//console.log(i);
-		 	    	//console.log("offset = " + offset);
-
-		 	    	console.log(alreadyMerged);
 
 		 	    	var nextRow;
 		 	    	var nextCol;
@@ -210,32 +194,25 @@
 						nextCol = currentCol;
 					}
 
-					// console.log("current  .row-" + currentRow + " .col-" + currentCol + ", value= " + 
-					// 	$(".row-" + currentRow + " .col-" + currentCol).text());
-					// console.log("next (+) .row-" + nextRow    + " .col-" + nextCol + ", value= " + 
- 				// 		$(".row-" + nextRow + " .col-" + nextCol).text());
+ 					currentCellValue = parseInt($(".row-" + currentRow + " .col-" + currentCol).text());
 
+		 	    	if ( currentCellValue != 0 ){
 
-		 	    	if ($(".row-" + currentRow + " .col-" + currentCol).text() != 0){
-		 	    		// console.log("  !=0");
-		 	    		
+		 	    		newCellValue = parseInt($(".row-" + nextRow + " .col-" + nextCol).text());
 
-		 	    		if ( $(".row-" + nextRow + " .col-" + nextCol).text() == 0 ||
-		 	    			 ($(".row-" + currentRow + " .col-" + currentCol).text() == 
-		 	    			  $(".row-" + nextRow + " .col-" + nextCol).text() &&
-		 	    			  !alreadyMerged[j+1])
-		 	    		   ){
-							// console.log("     update");
+	 	    		
+		 	    		if ( ( newCellValue == 0 )     
+		 	    	    ||	 ((currentCellValue == newCellValue) 
+		 	    	    	&& (!$(".row-" + currentRow + " .col-" + currentCol).hasClass("merged"))
+		 	    			 )
+		 	    		   ) {
 
-
-							if ($(".row-" + currentRow + " .col-" + currentCol).text() == 
-		 	    			    $(".row-" + nextRow + " .col-" + nextCol).text()){
-								alreadyMerged[j+1] = true;
-							}
+							if ( currentCellValue == newCellValue ){
+								$(".row-" + nextRow + " .col-" + nextCol).addClass("merged");
+							} 
 
 							$(".row-" + nextRow + " .col-" + nextCol).text(
-								parseInt($(".row-" + nextRow + " .col-" + nextCol).text()) +
-								parseInt($(".row-" + currentRow + " .col-" + currentCol).text())
+								currentCellValue + newCellValue
 								).colorCell();
 
 							$(".row-" + currentRow + " .col-" + currentCol).text(0).colorCell();
