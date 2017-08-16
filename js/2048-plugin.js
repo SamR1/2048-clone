@@ -15,7 +15,7 @@
 		"2048": "#475e57"
 	};
  	
- 	$.fn.initPage   = function(){
+ 	$.fn.initPage    = function(){
 
  		$("html, body").css({
  			"font-family"     : "Arial, sans-serif",
@@ -103,7 +103,8 @@
  		return this;
  	};
 
- 	$.fn.colorCell  = function(){
+ 	$.fn.colorCell   = function(){
+
  		this.css({
  			"background-color": gradient[this.text()],
  		});
@@ -113,9 +114,10 @@
 		else{
 			this.css({"color": "#474747"});
 		}
+		return this;
  	};
 
- 	$.fn.initSquare = function(){
+ 	$.fn.initSquare  = function(){
 
  		//fisrt number
  		var first   = initValue();
@@ -134,7 +136,7 @@
  		return this;
  	};
 
- 	$.fn.moveCells  = function(key){
+ 	$.fn.moveCells   = function(key){
 
 		var initRow  = 0;
 		var initCol  = 0;
@@ -252,9 +254,24 @@
  		var newCellx  = pos.x;
  		var newCelly  = pos.y;
  		$(".row-" + newCellx + " .col-" + newCelly).html(newValue).colorCell();
+
+ 		return this;
  	} 
 
+ 	$.fn.resetSquare = function() {
+
+ 		$(".square td").text(0).css({ 
+ 			"background-color": "#cdcdcd", 
+ 			"color": "#cdcdcd"
+ 		});
+ 		$("#currentScore").text(0);
+		$("#squaret").initSquare();
+
+ 		return this;
+ 	}
+
 }( jQuery ));
+
 
 var initValues = [2, 2, 2, 2, 2, 2, 2, 4];
 function initValue(){
@@ -280,6 +297,11 @@ $(document).init(function(){
 
 $(document).ready(function(){
 	$("#squaret").initSquare();
+
+	$("#newGame").click(function(){
+		$("#squaret").resetSquare();
+	});
+
 });
 
 $(document).keypress(function(e){
