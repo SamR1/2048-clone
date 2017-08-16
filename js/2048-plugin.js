@@ -109,17 +109,35 @@
  		return this;
  	};
 
- 	$.fn.colorCell   = function(){
+ 	$.fn.colorCell   = function(withFadeIn=false){
 
- 		this.css({
- 			"background-color": gradient[this.text()],
- 		});
-		if (this.text() == 0){
-			this.css({"color": "#cdcdcd"});
+		if (withFadeIn) {
+			this.css({ "opacity": 0 });
+	 		this.css({
+	 			"background-color": gradient[this.text()],
+	 		});
+			if (this.text() == 0){
+				this.css({"color": "#cdcdcd"});
+			}
+			else{
+				this.css({"color": "#474747"});
+			}
+			this.animate({ "opacity": 1 });
+
+
 		}
 		else{
-			this.css({"color": "#474747"});
+	 		this.css({
+	 			"background-color": gradient[this.text()],
+	 		});
+			if (this.text() == 0){
+				this.css({"color": "#cdcdcd"});
+			}
+			else{
+				this.css({"color": "#474747"});
+			}
 		}
+
 		return this;
  	};
 
@@ -286,7 +304,7 @@
  		var pos       = randomPosition();
  		var newCellx  = pos.x;
  		var newCelly  = pos.y;
- 		$(".row-" + newCellx + " .col-" + newCelly).html(newValue).colorCell();
+ 		$(".row-" + newCellx + " .col-" + newCelly).html(newValue).colorCell(true);
 
  		return this;
  	} 
@@ -306,7 +324,7 @@
 
 }( jQuery ));
 
-
+//to have more chance to get 2 instead of 4
 var initValues = [2, 2, 2, 2, 2, 2, 2, 4];
 function initValue(){
 	var i = Math.floor(Math.random() * 8);
@@ -324,7 +342,6 @@ function randomPosition(){
 	return {x: x, y: y};
 };
 
-
 $(document).init(function(){
 	$(document).initPage();
 });
@@ -335,7 +352,6 @@ $(document).ready(function(){
 	$("#newGame").click(function(){
 		$("#squaret").resetSquare();
 	});
-
 });
 
 $(document).keypress(function(e){
