@@ -136,6 +136,8 @@
 
  	$.fn.moveCells  = function(key){
 
+ 		console.log("========================================")
+
 		var initRow  = 0;
 		var initCol  = 0;
 		var offset   = 0;
@@ -171,22 +173,34 @@
  				break;
 		}
 
+		console.log("start fn");
+
+		// only one merged by col (or row) and by key pres !
+		var alreadyMerged= [false, false, false, false];
+
 		for (k=1; k<4; k++){
 
 			var currentRow = initRow;
 			var currentCol = initCol;
+			console.log("+++++++++++++++++")
 
 
-			    for (j=1; j<5; j++){
+		    for (j=1; j<5; j++){
+
+		    	
+		    	console.log("-------")
+
 
 		 	    for (i=1; i<4; i++){
 		 	    	//console.log("loop start");
 		 	    	//console.log(i);
 		 	    	//console.log("offset = " + offset);
 
+		 	    	console.log(alreadyMerged);
+
 		 	    	var nextRow;
 		 	    	var nextCol;
-
+		 	    	
 					if (beginsBy == "row") {
 						nextRow = currentRow;
 						nextCol = currentCol + (0 - offset);
@@ -196,19 +210,37 @@
 						nextCol = currentCol;
 					}
 
-					//console.log("current  .row-" + currentRow + " .col-" + currentCol);
-					//console.log("next (+) .row-" + nextRow + " .col-" + nextCol);
+					// console.log("current  .row-" + currentRow + " .col-" + currentCol + ", value= " + 
+					// 	$(".row-" + currentRow + " .col-" + currentCol).text());
+					// console.log("next (+) .row-" + nextRow    + " .col-" + nextCol + ", value= " + 
+ 				// 		$(".row-" + nextRow + " .col-" + nextCol).text());
 
 
 		 	    	if ($(".row-" + currentRow + " .col-" + currentCol).text() != 0){
-		 	    		//console.log("update");
+		 	    		// console.log("  !=0");
 		 	    		
-						$(".row-" + nextRow + " .col-" + nextCol).text(
-							parseInt($(".row-" + nextRow + " .col-" + nextCol).text()) +
-							parseInt($(".row-" + currentRow + " .col-" + currentCol).text())
-							).colorCell();
 
-						$(".row-" + currentRow + " .col-" + currentCol).text(0).colorCell();
+		 	    		if ( $(".row-" + nextRow + " .col-" + nextCol).text() == 0 ||
+		 	    			 ($(".row-" + currentRow + " .col-" + currentCol).text() == 
+		 	    			  $(".row-" + nextRow + " .col-" + nextCol).text() &&
+		 	    			  !alreadyMerged[j+1])
+		 	    		   ){
+							// console.log("     update");
+
+
+							if ($(".row-" + currentRow + " .col-" + currentCol).text() == 
+		 	    			    $(".row-" + nextRow + " .col-" + nextCol).text()){
+								alreadyMerged[j+1] = true;
+							}
+
+							$(".row-" + nextRow + " .col-" + nextCol).text(
+								parseInt($(".row-" + nextRow + " .col-" + nextCol).text()) +
+								parseInt($(".row-" + currentRow + " .col-" + currentCol).text())
+								).colorCell();
+
+							$(".row-" + currentRow + " .col-" + currentCol).text(0).colorCell();
+
+		 	    		}  		
 		 	    	}
 
 					if (beginsBy == "row") {
@@ -230,6 +262,12 @@
 
 		 	}
 		}
+
+		var newValue  = initValue();
+ 		var pos       = randomPosition();
+ 		var newCellx  = pos.x;
+ 		var newCelly  = pos.y;
+ 		$(".row-" + newCellx + " .col-" + newCelly).html(newValue).colorCell();
  	} 
 
 }( jQuery ));
