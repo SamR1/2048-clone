@@ -1,6 +1,7 @@
 (function ( $ ) {
 
 	var gradient = {
+		"0":    "#cdcdcd",
 		"2":    "#d2e4de",
 		"4":    "#c7ded6",
 		"8":    "#bbd7ce",
@@ -105,8 +106,13 @@
  	$.fn.colorCell  = function(){
  		this.css({
  			"background-color": gradient[this.text()],
- 			"color": "#474747"
  		});
+		if (this.text() == 0){
+			this.css({"color": "#cdcdcd"});
+		}
+		else{
+			this.css({"color": "#474747"});
+		}
  	};
 
  	$.fn.initSquare = function(){
@@ -127,6 +133,104 @@
 
  		return this;
  	};
+
+ 	$.fn.moveCells  = function(key){
+
+		var initRow  = 0;
+		var initCol  = 0;
+		var offset   = 0;
+		var beginsBy = "";
+
+ 		switch (key){
+ 			case(37): // to the left
+ 				initRow  = 0;
+ 				initCol  = 1;
+ 				offset   = 1;
+ 				beginsBy = "row";
+ 				break;
+
+ 			case(38): // to the top
+ 				initRow  = 1;
+ 				initCol  = 0;
+ 				offset   = 1;
+  				beginsBy = "col";
+ 				break;
+
+ 			case(39): // to the right
+ 				initRow  = 0;
+ 				initCol  = 2;
+ 				offset   = -1;
+  				beginsBy = "row";
+ 				break;
+
+ 			case(40): // to the bottom 
+ 				initRow  = 2;
+ 				initCol  = 0;
+ 				offset   = -1;
+ 				beginsBy = "col";
+ 				break;
+		}
+
+		for (k=1; k<4; k++){
+
+			var currentRow = initRow;
+			var currentCol = initCol;
+
+
+			    for (j=1; j<5; j++){
+
+		 	    for (i=1; i<4; i++){
+		 	    	//console.log("loop start");
+		 	    	//console.log(i);
+		 	    	//console.log("offset = " + offset);
+
+		 	    	var nextRow;
+		 	    	var nextCol;
+
+					if (beginsBy == "row") {
+						nextRow = currentRow;
+						nextCol = currentCol + (0 - offset);
+					}
+					else {
+						nextRow = currentRow + (0 - offset);
+						nextCol = currentCol;
+					}
+
+					//console.log("current  .row-" + currentRow + " .col-" + currentCol);
+					//console.log("next (+) .row-" + nextRow + " .col-" + nextCol);
+
+
+		 	    	if ($(".row-" + currentRow + " .col-" + currentCol).text() != 0){
+		 	    		//console.log("update");
+		 	    		
+						$(".row-" + nextRow + " .col-" + nextCol).text(
+							parseInt($(".row-" + nextRow + " .col-" + nextCol).text()) +
+							parseInt($(".row-" + currentRow + " .col-" + currentCol).text())
+							).colorCell();
+
+						$(".row-" + currentRow + " .col-" + currentCol).text(0).colorCell();
+		 	    	}
+
+					if (beginsBy == "row") {
+						currentCol += offset;
+					}
+					else {
+						currentRow += offset;
+					}
+		 	    }
+
+				if (beginsBy == "row") {
+					currentRow++;
+					currentCol = initCol;
+				}
+				else {
+					currentRow = initRow;
+					currentCol++;
+				}
+
+		 	}
+		}
+ 	} 
 
 }( jQuery ));
 
@@ -154,4 +258,11 @@ $(document).init(function(){
 
 $(document).ready(function(){
 	$("#squaret").initSquare();
+});
+
+$(document).keypress(function(e){
+	//for firefox : use of keyCode
+	if (e.keyCode > 36 && e.keyCode < 41 ){
+		$("#squaret").moveCells(e.keyCode);
+	}
 });
