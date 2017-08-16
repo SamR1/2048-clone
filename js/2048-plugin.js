@@ -57,7 +57,9 @@
 
  		$(".scoretab").css({
 			"width"           : "100%",
-			"text-align"      : "center"
+			"text-align"      : "center",
+			"font"            : "bold 20px Arial",
+			"color"           : "#555",
  		});
  		$("button").css({
  			"cursor"          : "pointer",
@@ -71,9 +73,7 @@
  		});
  		$(".score").css({
 			"background"      : "#e6e6e6",
-			"color"           : "#555",
-			"font"            : "bold 16px Arial",
-			"width"           : "150px",
+			"width"           : "150px"
  		});
 
 
@@ -208,6 +208,11 @@
 		 	    		   ) {
 
 							if ( currentCellValue == newCellValue ){
+								$("#currentScore").text(parseInt($("#currentScore").text()) + newCellValue * 2);
+								if ( parseInt( $("#bestScore").text()) < parseInt( $("#currentScore").text()) ){
+									$("#bestScore").text($("#currentScore").text());
+								}
+
 								$(".row-" + nextRow + " .col-" + nextCol).addClass("merged");
 							} 
 
@@ -216,6 +221,8 @@
 								).colorCell();
 
 							$(".row-" + currentRow + " .col-" + currentCol).text(0).colorCell();
+
+
 
 		 	    		}  		
 		 	    	}
