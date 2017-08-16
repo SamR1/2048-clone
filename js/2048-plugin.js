@@ -13,7 +13,7 @@
 		"1024": "#648479",
 		"2048": "#475e57"
 	};
- 
+ 	
  	$.fn.initPage   = function(){
 
  		$("html, body").css({
@@ -112,33 +112,46 @@
  	$.fn.initSquare = function(){
 
  		//fisrt number
- 		var first  = Math.floor((Math.random() * 2) + 1) *2;
- 		var firstx = Math.floor(Math.random() * 4);
- 		var firsty = Math.floor(Math.random() * 4);
- 		$(".row-" + firstx + " .col-" + firsty + "").html(first).colorCell();
+ 		var first   = initValue();
+ 		var pos     = randomPosition();
+ 		var firstx  = pos.x;
+ 		var firsty  = pos.y;
+ 		$(".row-" + firstx + " .col-" + firsty).html(first).colorCell();
 
  		//second number
- 		var second  = Math.floor((Math.random() * 2) + 1) *2;
- 		var secondx = Math.floor(Math.random() * 4);
- 		var secondy = Math.floor(Math.random() * 4);
- 		$(".row-" + secondx + " .col-" + secondy + "").html(second).colorCell();
+ 		var second  = initValue();
+ 		var pos     = randomPosition();
+ 		var secondx = pos.x;
+ 		var secondy = pos.y;
+ 		$(".row-" + secondx + " .col-" + secondy).html(second).colorCell();
 
  		return this;
  	};
- 	
+
 }( jQuery ));
 
-function generateMultiple(){
-	var res = Math.floor(Math.random() * ((2048 - 2) / 2)) * 2 + 2;
-	return res;
-}
+var initValues = [2, 2, 2, 2, 2, 2, 2, 4];
+function initValue(){
+	var i = Math.floor(Math.random() * 8);
+	return initValues[i];
+};
+
+function randomPosition(){
+	var x = 10; // 0 is a correct position
+	var y = 10;
+	while ((x == 10) ||
+		   ($(".row-" + x + " .col-" + y).text() != 0)) {
+		x = Math.floor(Math.random() * 4);
+		y = Math.floor(Math.random() * 4);
+	}
+	return {x: x, y: y};
+};
+
+
+$(document).init(function(){
+	$(document).initPage();
+});
 
 $(document).ready(function(){
-	console.log("start");
-
-	$(document).initPage();
-
 	$("#squaret").initSquare();
-
-	console.log("end");
 });
