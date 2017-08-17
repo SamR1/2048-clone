@@ -19,7 +19,7 @@
 		"2048": "#475e57"
 	};
 	var isGameWonOrLose = false; 
-	var hasOneCellMovedOrPopped = false;
+	var isMergePossible = false; 
 
 	//to get more chances to get a 2 instead of a 4
 	var initValues = [2, 2, 2, 2, 2, 2, 2, 4];
@@ -46,7 +46,16 @@
 			return null;
 		}
 	};
- 	
+
+	function simulateFourKeys(){
+		for (key=37; key<41; key++){
+			$("#squaret").moveCells(key, true);
+			if (isMergePossible) {
+				return;
+			}
+		}
+	}
+	
  	$.fn.initCSS      = function(){
 
  		$("html, body").css({
@@ -277,7 +286,7 @@
  		return this;
  	};
 
- 	$.fn.moveCells    = function(key){
+ 	$.fn.moveCells    = function(key, simulate=false){
 
  		if (isGameWonOrLose) {
  			return this;
@@ -287,7 +296,7 @@
 		var initCol  = 0;
 		var offset   = 0;
 		var beginsBy = "";
-		hasOneCellMovedOrPopped = false;
+		var hasOneCellMoved  = false;
 
  		switch (key){
  			case(37): // to the left
@@ -365,39 +374,44 @@
 
 		 	    	if ( currentCellValue != 0 ){
 
-		 	    		var isSameValue = false;
-		 	    		newCellValue = parseInt($(".row-" + nextRow + " .col-" + nextCol).text());
+		 	    		var isSameValue     = false;
+		 	    		var nextCellValue   = parseInt($(".row-" + nextRow + " .col-" + nextCol).text());
+		 	    		var hasClassMerged  = $(".row-" + currentRow + " .col-" + currentCol).hasClass("merged");
 	 	    		
-		 	    		if ( ( newCellValue == 0 )     
-		 	    	    ||	 ((currentCellValue == newCellValue) 
-		 	    	    	&& (!$(".row-" + currentRow + " .col-" + currentCol).hasClass("merged"))
-		 	    			 )
+		 	    		if ( ( nextCellValue == 0 )     
+		 	    	    ||	 ((currentCellValue == nextCellValue) && (!hasClassMerged))
 		 	    		   ) {
 
-							if ( currentCellValue == newCellValue ){
+		 	    			// no need to continue further
+							if (simulate) {
+								isMergePossible = true;
+								return this;
+							}
 
-								isSameValue = true;
-								
-								$("#currentScore").text(parseInt($("#currentScore").text()) + newCellValue * 2);
+							// merge is possible
+							if ( currentCellValue == nextCellValue ){
+
+								isSameValue = true;	
+								$("#currentScore").text(parseInt($("#currentScore").text()) + nextCellValue * 2);
 								if ( parseInt( $("#bestScore").text()) < parseInt( $("#currentScore").text()) ){
 									$("#bestScore").text($("#currentScore").text());
 								}
-
-								$(".row-" + nextRow + " .col-" + nextCol).addClass("merged");
+								$(".row-" + nextRow + " .col-" + nextCol).addClass("merged");								
 							} 
+							else {
+								$(".row-" + newCellx + " .col-" + newCelly).removeClass('merged');
+							}
 
-							newCellValue = currentCellValue + newCellValue;
-
+							nextCellValue = currentCellValue + nextCellValue;
 							// // for test only !!!
 							// var index = Math.floor(Math.random() * 6);
 							// if (winValue[index] == 2048) {
-							// 	newCellValue = 2048;
+							// 	nextCellValue = 2048;
 							// }
 							// // for test only !!!
+							$(".row-" + nextRow + " .col-" + nextCol).text(nextCellValue);
 
-							$(".row-" + nextRow + " .col-" + nextCol).text(newCellValue);
-
-							if ( newCellValue == 2048 ) {
+							if ( nextCellValue == 2048 ) {
 
 						 		if ( $(".square td").text() != "0" ) {
 							 		$("this").css({ 
@@ -411,23 +425,26 @@
 						 		});
 								isGameWonOrLose = true;
 						 		$('#overl').css({"z-index": "100"});
- 		            $('#msg').text("You win! Brava !!");
+ 		            			$('#msg').text("You win! Brava !!");
 								return this;
 							}
 							else {
 
-								if (isSameValue){
-									$(".row-" + nextRow + " .col-" + nextCol).colorCell();
-								}
-								else {
-									$(".row-" + nextRow + " .col-" + nextCol).colorCell();
-								}
+								if (!simulate){
 
-								$(".row-" + currentRow + " .col-" + currentCol).text(0).colorCell();						
+									if (isSameValue){
+										$(".row-" + nextRow + " .col-" + nextCol).colorCell();
+									}
+									else {
+										$(".row-" + nextRow + " .col-" + nextCol).colorCell();
+									}
+									$(".row-" + currentRow + " .col-" + currentCol).text(0).colorCell();
+								}						
 							}
-							hasOneCellMovedOrPopped = true;
-		 	    		}  		
-		 	    	}
+							hasOneCellMoved = true;
+		 	    		} // nextCellValue == 0 or != nextCellValue and 
+		 	    		  // nextCellValue not already merged
+		 	    	} // currentCellValue != 0 
 
 					if (beginsBy == "row") {
 						currentCol += offset;
@@ -447,21 +464,32 @@
 				}
 		 	}
 		}
-	
- 		var pos = randomPosition();
- 		if (hasOneCellMovedOrPopped) {
- 			var newValue  = initValue();
-			var newCellx  = pos.x;
-			var newCelly  = pos.y;
-			$(".row-" + newCellx + " .col-" + newCelly).html(newValue).colorCell(true);
- 		}
- 		else{
- 			isGameWonOrLose = true;
-	 		$('#overl').css({"z-index": "100"});
-	 		$('#msg').text("You loose! Too bad :(");
-			return this;
+
+ 		if ($(".square td:contains(\"0\")").length == 0
+ 			&& !simulate){
+
+			simulateFourKeys();
+
+ 			if (!isMergePossible){
+	 			isGameWonOrLose = true;
+		 		$('#overl').css({"z-index": "100"});
+		 		$('#msg').text("You loose! Too bad :(");
+				return this;
+ 			}
  		}
 
+ 		if (hasOneCellMoved) {
+			var pos = randomPosition();
+	 		if (pos != null) {
+	 			var newValue  = initValue();
+				var newCellx  = pos.x;
+				var newCelly  = pos.y;
+				if (!simulate){
+					$(".row-" + newCellx + " .col-" + newCelly).html(newValue).colorCell(true);
+					$(".row-" + newCellx + " .col-" + newCelly).removeClass('merged');
+				}	
+	 		}	
+ 		}
  		return this;
  	} 
 
@@ -475,6 +503,7 @@
 		$("#squaret").initSquare();
 		isGameWonOrLose = false;
 		hasOneCellMovedOrPopped = false;
+		isMergePossible = false;
  		$('#overl').text("").css({"z-index": "-100"});
 
  		return this;
