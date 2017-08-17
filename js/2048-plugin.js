@@ -18,8 +18,25 @@
 		"1024": "#648479",
 		"2048": "#475e57"
 	};
-
 	var isGameWon = false; 
+
+	//to get more chances to get a 2 instead of a 4
+	var initValues = [2, 2, 2, 2, 2, 2, 2, 4];
+		function initValue(){
+		var i = Math.floor(Math.random() * 8);
+		return initValues[i];
+	};
+
+	function randomPosition(){
+		var x = 10; // 0 is a correct position
+		var y = 10;
+		while ((x == 10) ||
+			   ($(".row-" + x + " .col-" + y).text() != 0)) {
+			x = Math.floor(Math.random() * 4);
+			y = Math.floor(Math.random() * 4);
+		}
+		return {x: x, y: y};
+	};
  	
  	$.fn.initPage    = function(){
 
@@ -81,7 +98,6 @@
 			"background"      : "#e6e6e6",
 			"width"           : "150px"
  		});
-
 
  		$(".square").css({
 			"table-layout"    : "fixed",
@@ -194,17 +210,36 @@
  				offset   = -1;
  				beginsBy = "col";
  				break;
+
+ 			default:
+ 				// in case the function is called with 
+ 				// others keys
+ 				return this;
 		}
 
 		$(".square td").removeClass("merged");
 
+		// A cell can move up to 3 times
 		for (k=1; k<4; k++){
 
 			var currentRow = initRow;
 			var currentCol = initCol;
 
+			// According to the key, the table is first read by:
+			// - rows (left or right keys)
+			// - columns (up or downt keys)
+			// (4 by 4 square)
 		    for (j=1; j<5; j++){
 
+
+				// After, the table is read by:
+				// - columns (left or right keys)
+				// - rows (up or downt keys)
+				// It begins with the farest element, that can move
+				// if the next cell is empty
+				// Example: if the left key is pressed, it begins
+				// with the column 1 and checks if this cell can
+				// move to the column 0.
 		 	    for (i=1; i<4; i++){
 
 		 	    	var nextRow;
@@ -255,7 +290,6 @@
 							// // for test only !!!
 
 							$(".row-" + nextRow + " .col-" + nextCol).text(newCellValue);
-							
 
 							if ( newCellValue == 2048 ) {
 
@@ -270,20 +304,18 @@
 						 			"color": "#2d2d2d"
 						 		});
 								isGameWon = true;
-								alert("You win!");
+								alert("You win! Brava !!");
 								return this;
 							}
 							else {
+
 								if (isSameValue){
-									$(".row-" + nextRow + " .col-" + nextCol).colorCell(true);
+									$(".row-" + nextRow + " .col-" + nextCol).colorCell();
 								}
 								else {
 									$(".row-" + nextRow + " .col-" + nextCol).colorCell();
 								}
-								// $(".row-" + nextRow + " .col-" + nextCol).text().css({
-								// 	'transition': 'transform 1s',
-								// 	'transform': 'translate(10px, 10px)'
-								// });
+
 								$(".row-" + currentRow + " .col-" + currentCol).text(0).colorCell();						
 							}
 		 	    		}  		
@@ -305,7 +337,6 @@
 					currentRow = initRow;
 					currentCol++;
 				}
-
 		 	}
 		}
 
@@ -332,40 +363,3 @@
  	}
 
 }( jQuery ));
-
-//to have more chance to get 2 instead of 4
-var initValues = [2, 2, 2, 2, 2, 2, 2, 4];
-function initValue(){
-	var i = Math.floor(Math.random() * 8);
-	return initValues[i];
-};
-
-function randomPosition(){
-	var x = 10; // 0 is a correct position
-	var y = 10;
-	while ((x == 10) ||
-		   ($(".row-" + x + " .col-" + y).text() != 0)) {
-		x = Math.floor(Math.random() * 4);
-		y = Math.floor(Math.random() * 4);
-	}
-	return {x: x, y: y};
-};
-
-$(document).init(function(){
-	$(document).initPage();
-});
-
-$(document).ready(function(){
-	$("#squaret").initSquare();
-
-	$("#newGame").click(function(){
-		$("#squaret").resetSquare();
-	});
-});
-
-$(document).keypress(function(e){
-	//for firefox : use of keyCode
-	if (e.keyCode > 36 && e.keyCode < 41 ){
-		$("#squaret").moveCells(e.keyCode);
-	}
-});
