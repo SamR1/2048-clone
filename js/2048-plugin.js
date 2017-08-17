@@ -122,6 +122,8 @@
 			"font"            : "18px Arial"
  		});
 
+ 		$("#squaret").initSquare();
+
  		return this;
  	};
 
