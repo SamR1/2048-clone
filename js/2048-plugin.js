@@ -56,19 +56,43 @@
 		}
 	}
 	
- 	$.fn.initCSS      = function(){
+	function sizeOverlay(){
 
- 		$("html, body").css({
- 			"font-family"     : "Arial, sans-serif",
- 			"font-size"       : "0.95em",
- 			"background-color": "#f6f6f6"
- 		});
+	 	var top    = $("#squarec").position().top;
+ 		var left   = $("#squarec").position().left;
+ 		var width  = $("#squarec").width();
+ 		var height = $("#squarec").height();
+ 		$('#overl')
+ 			.addClass('overlay')
+ 			.css({
+				"position"       : "absolute",
+ 				"top"            : top,
+ 				"left"           : left,
+ 				"width"          : width,
+ 				"height"         : height,
+ 				"line-height"    : height + "px",
+				"background"     : "#dedede",
+				"opacity"        : "0.5",
+				"filter"         : "alpha(opacity=75)",
+				"text-align"     : "center",
+ 				"z-index"        : "-100"
+ 			});
+	}
 
- 		$(".topnav").css({
+
+	$.fn.initCSS      = function(){
+
+		$("html, body").css({
+			"font-family"     : "Arial, sans-serif",
+			"font-size"       : "0.95em",
+			"background-color": "#f6f6f6"
+		});
+
+		$(".topnav").css({
 			"background-color": "#333",
 			"overflow"        : "hidden"
- 		});
- 		$(".topnav a").css({
+		});
+		$(".topnav a").css({
 			"float"           : "left",
 			"display"         : "block",
 			"color"           : "#f2f2f2",
@@ -76,14 +100,14 @@
 			"padding"         : "22px 16px 16px 16px",
 			"text-decoration" : "none",
 			"font-size"       : "17px"
- 		});
- 		$(".brand").css({
+		});
+		$(".brand").css({
 			"background-color": "#adadad",
 			"padding-top"     : "16px",
 			"font-size"       : "24px"
- 		});
+		});
 
- 		$(".contnr").css({
+		$(".contnr").css({
 			"padding"         : "20px",
 			"position"        : "relative",
 			"left"            : "20%",
@@ -94,16 +118,16 @@
 			"border-style"    : "solid",
 			"border-width"    : "0.5px",
 			"border-color"    : "#f6f6f6"
- 		});
+		});
 
- 		$(".scoretab").css({
+		$(".scoretab").css({
 			"width"           : "100%",
 			"text-align"      : "center",
 			"font"            : "bold 20px Arial",
 			"color"           : "#555",
- 		});
- 		$("button").css({
- 			"cursor"          : "pointer",
+		});
+		$("button").css({
+			"cursor"          : "pointer",
 			"padding"         : "6px 0 6px 0",
 			"font"            : "bold 16px Arial",
 			"background"      : "#f5f5f5",
@@ -111,13 +135,13 @@
 			"border-radius"   : "2px",
 			"width"           : "150px",
 			"border"          : "none"
- 		});
- 		$(".score").css({
+		});
+		$(".score").css({
 			"background"      : "#e6e6e6",
 			"width"           : "150px"
- 		});
+		});
 
- 		$(".squarec").css({
+		$(".squarec").css({
  			"position"        : "fixed",
  		});
  		$(".square").css({
@@ -151,25 +175,8 @@
 
 
  		$("#squaret").initSquare();
- 		var top  = $("#squarec").position().top;
- 		var left = $("#squarec").position().left;
- 		var width  = $("#squarec").width();
- 		var height = $("#squarec").height();
- 		$('#overl')
- 			.addClass('overlay')
- 			.css({
-	 			"position"       : "absolute",
- 				"top"            : top,
- 				"left"           : left,
- 				"width"          : width,
- 				"height"         : height,
- 				"line-height"    : height + "px",
-				"background"     : "#dedede",
-				"opacity"        : "0.5",
-				"filter"         : "alpha(opacity=75)",
-				"text-align"     : "center",
- 				"z-index"        : "-100"
- 			});
+
+ 		sizeOverlay();
 
  		return this;
  	};
@@ -345,7 +352,7 @@
 			// - rows (left or right keys)
 			// - columns (up or downt keys)
 			// (4 by 4 square)
-		    for (j=1; j<5; j++){
+			for (j=1; j<5; j++){
 
 
 				// After, the table is read by:
@@ -356,11 +363,11 @@
 				// Example: if the left key is pressed, it begins
 				// with the column 1 and checks if this cell can
 				// move to the column 0.
-		 	    for (i=1; i<4; i++){
+				for (i=1; i<4; i++){
 
-		 	    	var nextRow;
-		 	    	var nextCol;
-		 	    	
+					var nextRow;
+					var nextCol;
+					
 					if (beginsBy == "row") {
 						nextRow = currentRow;
 						nextCol = currentCol + (0 - offset);
@@ -374,15 +381,15 @@
 
 		 	    	if ( currentCellValue != 0 ){
 
-		 	    		var isSameValue     = false;
-		 	    		var nextCellValue   = parseInt($(".row-" + nextRow + " .col-" + nextCol).text());
-		 	    		var hasClassMerged  = $(".row-" + currentRow + " .col-" + currentCol).hasClass("merged");
-	 	    		
-		 	    		if ( ( nextCellValue == 0 )     
-		 	    	    ||	 ((currentCellValue == nextCellValue) && (!hasClassMerged))
-		 	    		   ) {
+						var isSameValue     = false;
+						var nextCellValue   = parseInt($(".row-" + nextRow + " .col-" + nextCol).text());
+						var hasClassMerged  = $(".row-" + currentRow + " .col-" + currentCol).hasClass("merged");
 
-		 	    			// no need to continue further
+						if ( ( nextCellValue == 0 )     
+						||	 ((currentCellValue == nextCellValue) && (!hasClassMerged))
+						   ) {
+
+							// no need to continue further
 							if (simulate) {
 								isMergePossible = true;
 								return this;
@@ -413,11 +420,11 @@
 
 							if ( nextCellValue == 2048 ) {
 
-						 		if ( $(".square td").text() != "0" ) {
-							 		$("this").css({ 
-							 			"background-color": "#2d2d2d", 
-							 			"color": "#ffffff"
-							 		});
+								if ( $(".square td").text() != "0" ) {
+									$("this").css({ 
+										"background-color": "#2d2d2d", 
+										"color": "#ffffff"
+									});
 						 		}
 						 		$(".row-" + nextRow + " .col-" + nextCol).css({ 
 						 			"background-color": "#ffffff", 
@@ -425,7 +432,7 @@
 						 		});
 								isGameWonOrLose = true;
 						 		$('#overl').css({"z-index": "100"});
- 		            			$('#msg').text("You win! Brava !!");
+ 								$('#msg').text("You win! Brava !!");
 								return this;
 							}
 							else {
@@ -442,9 +449,9 @@
 								}						
 							}
 							hasOneCellMoved = true;
-		 	    		} // nextCellValue == 0 or != nextCellValue and 
-		 	    		  // nextCellValue not already merged
-		 	    	} // currentCellValue != 0 
+		 				} // nextCellValue == 0 or != nextCellValue and 
+		 				  // nextCellValue not already merged
+		 			} // currentCellValue != 0 
 
 					if (beginsBy == "row") {
 						currentCol += offset;
@@ -452,7 +459,7 @@
 					else {
 						currentRow += offset;
 					}
-		 	    }
+		 		}
 
 				if (beginsBy == "row") {
 					currentRow++;
@@ -508,5 +515,9 @@
 
  		return this;
  	}
+
+ 	$(window).resize(function(){
+ 		sizeOverlay();
+ 	});
 
 }( jQuery ));
