@@ -47,7 +47,7 @@
 		}
 	};
  	
- 	$.fn.initPage     = function(){
+ 	$.fn.initCSS      = function(){
 
  		$("html, body").css({
  			"font-family"     : "Arial, sans-serif",
@@ -136,7 +136,8 @@
  		});
 
  		$("#how").css({
-			"font"            : "18px Arial" // be aware, in one line the line-height is set
+ 			// be aware, in one line, the line-height is set by default
+			"font"            : "18px Arial" 
  		});
 
 
@@ -189,6 +190,73 @@
 
 		return this;
  	};
+
+ 	$.fn.initPage     = function(elmt){
+
+		$(elmt).append(
+			$('<div\>', {class: 'contnr'}).append(
+				$('<div\>', {id: 'score'})
+			)
+		);
+		$("#score").append(
+			$('<table\>', {class: 'scoretab'}).append(
+				$('<tr\>').append(
+					$('<td\>', {rowspan: '2'}).append(
+						$('<button\>', {id: 'newGame', text: 'New Game'})
+					    )
+					).append(
+					$('<td\>', {class: 'score', text: 'Score'})
+					).append(
+					$('<td\>', {class: 'score', text: 'Best Score'})
+				)
+			).append(
+				$('<tr\>').append(
+					$('<td\>', {id: 'currentScore', text: '0'})
+					).append(
+					$('<td\>', {id: 'bestScore', text: '0'})
+				)				
+			)
+		);
+
+		$(elmt).append(
+			$('<div\>', {class: 'contnr'}).append(
+				$('<div\>', {id: 'squarec'})
+				).append(
+				$('<div\>', {id: 'overl'}).append(
+					$('<div\>', {id: 'msg'})
+				)
+			)
+		);
+		$('#squarec').append(
+			$('<table\>', {class: 'square', id: 'squaret'})
+		);
+
+		for (i=0; i<4; i++){
+			$('#squaret').append(
+				$('<tr\>', {class: 'row-' + i}).append(
+					$('<td\>', {class: 'col-0', text: '0'})
+				).append(
+					$('<td\>', {class: 'col-1', text: '0'})
+				).append(
+					$('<td\>', {class: 'col-2', text: '0'})
+				).append(
+					$('<td\>', {class: 'col-3', text: '0'})
+				)
+			);
+		};
+
+		$(elmt).append(
+			$('<div\>', {class: 'contnr'}).append(
+				$('<div\>', {id: 'how', html:
+					'<strong>How to play</strong>: Use your arrow keys to ' +
+					'move the tiles.<br>When two tiles with the same number' +
+					' touch, they <strong>merge into one</strong>! '}
+				)
+			)
+		);
+
+		$(document).initCSS();
+	};
 
  	$.fn.initSquare   = function(){
 
@@ -342,8 +410,8 @@
 						 			"color": "#2d2d2d"
 						 		});
 								isGameWonOrLose = true;
-						 		$('#overl').text("You win! Brava !!")
-						 		           .css({"z-index": "100"});
+						 		$('#overl').css({"z-index": "100"});
+ 		            $('#msg').text("You win! Brava !!");
 								return this;
 							}
 							else {

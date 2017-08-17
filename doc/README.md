@@ -13,7 +13,24 @@ The game stopped when :
 * JQuery
 
 ### HTML structure
-See the HTML file provided, for class and id names.
-The plugin only works with four by four square (table).
+Add a div with an id and the following lines in a javascript script:
 
+```javascript
+$(document).ready(function(){
+    $(document).initPage("#squareLocation");
+    
+    $("#newGame").click(function(){
+        $("#squaret").resetSquare();
+    });
+
+    $(document).keypress(function(e){
+        //for firefox : use of keyCode
+        if (e.keyCode > 36 && e.keyCode < 41 ){
+            $("#squaret").moveCells(e.keyCode);
+        }
+    });
+});
+```
+
+This version is not responsive (minimum width: 1030px).
 

@@ -1,5 +1,5 @@
 $(document).ready(function(){
-	$(document).initPage();
+	$(document).initPage("#squareLocation");
 	
 	$("#newGame").click(function(){
 		$("#squaret").resetSquare();
