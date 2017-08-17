@@ -23,7 +23,7 @@
 
 	//to get more chances to get a 2 instead of a 4
 	var initValues = [2, 2, 2, 2, 2, 2, 2, 4];
-		function initValue(){
+	function initValue(){
 		var i = Math.floor(Math.random() * 8);
 		return initValues[i];
 	};
@@ -47,7 +47,7 @@
 		}
 	};
  	
- 	$.fn.initPage    = function(){
+ 	$.fn.initPage     = function(){
 
  		$("html, body").css({
  			"font-family"     : "Arial, sans-serif",
@@ -108,6 +108,9 @@
 			"width"           : "150px"
  		});
 
+ 		$(".squarec").css({
+ 			"position"        : "fixed",
+ 		});
  		$(".square").css({
 			"table-layout"    : "fixed",
 			"word-break"      : "break-all",
@@ -115,7 +118,7 @@
 			"width"           : "600px",
 			"height"          : "600px",
 			"margin"          : "auto",
-			"text-align"      : "center"
+			"text-align"      : "center",
  		});
  		$(".square th, .square td").css({
  			"border"          : "15px solid #8a8a8a",
@@ -127,16 +130,41 @@
 			"color"           : "#cdcdcd"
  		});
 
- 		$("#how").css({
-			"font"            : "18px Arial"
+ 		$("#msg").css({
+			"font-size"       : "40px",
+			"font-weight"     : "bold"
  		});
 
+ 		$("#how").css({
+			"font"            : "18px Arial" // be aware, in one line the line-height is set
+ 		});
+
+
  		$("#squaret").initSquare();
+ 		var top  = $("#squarec").position().top;
+ 		var left = $("#squarec").position().left;
+ 		var width  = $("#squarec").width();
+ 		var height = $("#squarec").height();
+ 		$('#overl')
+ 			.addClass('overlay')
+ 			.css({
+	 			"position"       : "absolute",
+ 				"top"            : top,
+ 				"left"           : left,
+ 				"width"          : width,
+ 				"height"         : height,
+ 				"line-height"    : height + "px",
+				"background"     : "#dedede",
+				"opacity"        : "0.5",
+				"filter"         : "alpha(opacity=75)",
+				"text-align"     : "center",
+ 				"z-index"        : "-100"
+ 			});
 
  		return this;
  	};
 
- 	$.fn.colorCell   = function(withFadeIn=false){
+ 	$.fn.colorCell    = function(withFadeIn=false){
 
 		if (withFadeIn && this.text() != 0) {
 	
@@ -146,7 +174,6 @@
  			});
 			this.css({"color": "#474747"});
 			this.animate({ "opacity": 1 });
-
 		}
 		else{
 	 		this.css({
@@ -163,7 +190,7 @@
 		return this;
  	};
 
- 	$.fn.initSquare  = function(){
+ 	$.fn.initSquare   = function(){
 
  		//fisrt number
  		var first   = initValue();
@@ -182,7 +209,7 @@
  		return this;
  	};
 
- 	$.fn.moveCells   = function(key){
+ 	$.fn.moveCells    = function(key){
 
  		if (isGameWonOrLose) {
  			return this;
@@ -315,7 +342,8 @@
 						 			"color": "#2d2d2d"
 						 		});
 								isGameWonOrLose = true;
-								alert("You win! Brava !!");
+						 		$('#overl').text("You win! Brava !!")
+						 		           .css({"z-index": "100"});
 								return this;
 							}
 							else {
@@ -361,14 +389,15 @@
  		}
  		else{
  			isGameWonOrLose = true;
-			alert("You loose! Too bad :(");
+	 		$('#overl').css({"z-index": "100"});
+	 		$('#msg').text("You loose! Too bad :(");
 			return this;
  		}
 
  		return this;
  	} 
 
- 	$.fn.resetSquare = function() {
+ 	$.fn.resetSquare  = function() {
 
  		$(".square td").text(0).css({ 
  			"background-color": "#cdcdcd", 
@@ -378,6 +407,7 @@
 		$("#squaret").initSquare();
 		isGameWonOrLose = false;
 		hasOneCellMovedOrPopped = false;
+ 		$('#overl').text("").css({"z-index": "-100"});
 
  		return this;
  	}
