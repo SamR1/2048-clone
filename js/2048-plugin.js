@@ -79,6 +79,46 @@
  			});
 	}
 
+	function saveData(){
+	
+		localStorage.setItem("bestScore",$("#bestScore").text());
+
+		var squareData = {
+			"score" : $("#currentScore").text(), 
+		}
+		$(".square tr").each(function(){
+			var tdValues = [];
+			var trclass  = $(this).attr('class')
+			$(this).children().each(function () {
+				tdValues.push($(this).text());
+			});
+			squareData[trclass] = tdValues;
+		});
+
+		var squareData_json = JSON.stringify(squareData);
+		localStorage.setItem("squareData",squareData_json);
+
+	}
+
+	function loadData(){
+
+		console.log("loadData");
+
+		var squareData_json = localStorage.getItem("squareData");
+		var squareData      = JSON.parse(squareData_json);
+
+		$("#currentScore").text(squareData["score"]);
+
+		$(".square tr").each(function(){
+			var trclass  = $(this).attr('class')
+			var i = 0;
+			$(this).children().each(function () { 
+				$(this).text(squareData[trclass][i]);
+				$(this).colorCell();
+				i++;
+			});
+		});			
+	}
 
 	$.fn.initCSS      = function(){
 
@@ -276,19 +316,29 @@
 
  	$.fn.initSquare   = function(){
 
- 		//fisrt number
- 		var first   = initValue();
- 		var pos     = randomPosition();
- 		var firstx  = pos.x;
- 		var firsty  = pos.y;
- 		$(".row-" + firstx + " .col-" + firsty).html(first).colorCell();
+		if( localStorage.getItem("bestScore") != undefined ){
+			$("#bestScore").text(localStorage.getItem("bestScore"));
+		}
 
- 		//second number
- 		var second  = initValue();
- 		var pos     = randomPosition();
- 		var secondx = pos.x;
- 		var secondy = pos.y;
- 		$(".row-" + secondx + " .col-" + secondy).html(second).colorCell();
+ 		if( localStorage.getItem("squareData") != undefined ){
+ 			loadData();
+ 		}
+ 		else{
+
+	 		//fisrt number
+	 		var first   = initValue();
+	 		var pos     = randomPosition();
+	 		var firstx  = pos.x;
+	 		var firsty  = pos.y;
+	 		$(".row-" + firstx + " .col-" + firsty).html(first).colorCell();
+
+	 		//second number
+	 		var second  = initValue();
+	 		var pos     = randomPosition();
+	 		var secondx = pos.x;
+	 		var secondy = pos.y;
+	 		$(".row-" + secondx + " .col-" + secondy).html(second).colorCell();
+ 		}
 
  		return this;
  	};
@@ -433,6 +483,7 @@
 								isGameWonOrLose = true;
 						 		$('#overl').css({"z-index": "100"});
  								$('#msg').text("You win! Brava !!");
+ 								saveData();
 								return this;
 							}
 							else {
@@ -472,6 +523,8 @@
 		 	}
 		}
 
+
+
  		if ($(".square td:contains(\"0\")").length == 0
  			&& !simulate){
 
@@ -481,6 +534,7 @@
 	 			isGameWonOrLose = true;
 		 		$('#overl').css({"z-index": "100"});
 		 		$('#msg').text("You loose! Too bad :(");
+		 		saveData();
 				return this;
  			}
  		}
@@ -497,10 +551,13 @@
 				}	
 	 		}	
  		}
+		saveData();
  		return this;
  	} 
 
  	$.fn.resetSquare  = function() {
+
+ 		localStorage.removeItem("squareData");
 
  		$(".square td").text(0).css({ 
  			"background-color": "#cdcdcd", 
@@ -519,5 +576,7 @@
  	$(window).resize(function(){
  		sizeOverlay();
  	});
+
+ 	return this;
 
 }( jQuery ));
