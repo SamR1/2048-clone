@@ -26,7 +26,7 @@
 	function initValue(){
 		var i = Math.floor(Math.random() * 8);
 		return initValues[i];
-	};
+	}
 
 	function randomPosition(){
 		var x = 10; // 0 is a correct position
@@ -38,14 +38,12 @@
 				x = Math.floor(Math.random() * 4);
 				y = Math.floor(Math.random() * 4);
 			}
-			hasOneCellMovedOrPopped = true;
 			return {x: x, y: y};
 		}
 		else{
-			hasOneCellMovedOrPopped = false;
 			return null;
 		}
-	};
+	}
 
 	function simulateFourKeys(){
 		for (key=37; key<41; key++){
@@ -55,32 +53,23 @@
 			}
 		}
 	}
-	
-	function sizeOverlay(){
 
-	 	var top    = $("#squarec").position().top;
- 		var left   = $("#squarec").position().left;
- 		var width  = $("#squarec").width();
- 		var height = $("#squarec").height();
- 		$('#overl')
- 			.addClass('overlay')
- 			.css({
-				"position"       : "absolute",
- 				"top"            : top,
- 				"left"           : left,
- 				"width"          : width,
- 				"height"         : height,
- 				"line-height"    : height + "px",
-				"background"     : "#dedede",
-				"opacity"        : "0.5",
-				"filter"         : "alpha(opacity=75)",
-				"text-align"     : "center",
- 				"z-index"        : "-100"
- 			});
-	}
+    function isMergePossibleFn(){
+ 		if ($(".square td:contains(\"0\")").length == 0){
+			isMergePossible = false;
+			simulateFourKeys();
 
-	function saveData(){
-	
+ 			if (!isMergePossible){
+
+	 			isGameWonOrLose = true;
+		 		$('#overl').css({"z-index": 100});
+		 		$('#msg').text("You loose! Too bad :(");
+ 			}
+ 		}
+ 		return isMergePossible;
+    }
+
+	function saveData(){	
 		localStorage.setItem("bestScore",$("#bestScore").text());
 
 		var squareData = {
@@ -97,11 +86,9 @@
 
 		var squareData_json = JSON.stringify(squareData);
 		localStorage.setItem("squareData",squareData_json);
-
 	}
 
 	function loadData(){
-
 		var squareData_json = localStorage.getItem("squareData");
 		var squareData      = JSON.parse(squareData_json);
 
@@ -211,13 +198,31 @@
 			"font"            : "18px Arial" 
  		});
 
-
- 		$("#squaret").initSquare();
-
- 		sizeOverlay();
-
  		return this;
  	};
+
+	$.fn.sizeOverlay   = function(){
+
+	 	var top    = $("#squarec").position().top;
+ 		var left   = $("#squarec").position().left;
+ 		var width  = $("#squarec").width();
+ 		var height = $("#squarec").height();
+ 		$(this)
+ 			.addClass('overlay')
+ 			.css({
+				"position"       : "absolute",
+ 				"top"            : top,
+ 				"left"           : left,
+ 				"width"          : width,
+ 				"height"         : height,
+ 				"line-height"    : height + "px",
+				"background"     : "#dedede",
+				"opacity"        : "0.5",
+				"filter"         : "alpha(opacity=75)",
+				"text-align"     : "center",
+ 				"z-index"        : "-100"
+ 			});
+	};
 
  	$.fn.colorCell    = function(withFadeIn=false){
 
@@ -243,6 +248,37 @@
 		}
 
 		return this;
+ 	};
+
+ 	$.fn.initSquareData = function(){
+
+		if( localStorage.getItem("bestScore") != undefined ){
+			$("#bestScore").text(localStorage.getItem("bestScore"));
+		}
+
+ 		if( localStorage.getItem("squareData") != undefined ){
+ 			loadData();
+
+	 		isMergePossibleFn();
+ 		}
+ 		else {
+
+	 		//fisrt number
+	 		var first   = initValue();
+	 		var pos     = randomPosition();
+	 		var firstx  = pos.x;
+	 		var firsty  = pos.y;
+	 		$(".row-" + firstx + " .col-" + firsty).html(first).colorCell();
+
+	 		//second number
+	 		var second  = initValue();
+	 		var pos     = randomPosition();
+	 		var secondx = pos.x;
+	 		var secondy = pos.y;
+	 		$(".row-" + secondx + " .col-" + secondy).html(second).colorCell();
+ 		}
+
+ 		return this;
  	};
 
  	$.fn.initPage     = function(elmt){
@@ -310,42 +346,15 @@
 		);
 
 		$(document).initCSS();
+		$("#overl").sizeOverlay();
+ 		$("#squaret").initSquareData();
 	};
-
- 	$.fn.initSquare   = function(){
-
-		if( localStorage.getItem("bestScore") != undefined ){
-			$("#bestScore").text(localStorage.getItem("bestScore"));
-		}
-
- 		if( localStorage.getItem("squareData") != undefined ){
- 			loadData();
- 		}
- 		else{
-
-	 		//fisrt number
-	 		var first   = initValue();
-	 		var pos     = randomPosition();
-	 		var firstx  = pos.x;
-	 		var firsty  = pos.y;
-	 		$(".row-" + firstx + " .col-" + firsty).html(first).colorCell();
-
-	 		//second number
-	 		var second  = initValue();
-	 		var pos     = randomPosition();
-	 		var secondx = pos.x;
-	 		var secondy = pos.y;
-	 		$(".row-" + secondx + " .col-" + secondy).html(second).colorCell();
- 		}
-
- 		return this;
- 	};
 
  	$.fn.moveCells    = function(key, simulate=false){
 
  		if (isGameWonOrLose) {
  			return this;
- 		}		
+ 		}
 
 		var initRow  = 0;
 		var initCol  = 0;
@@ -401,7 +410,6 @@
 			// - columns (up or downt keys)
 			// (4 by 4 square)
 			for (j=1; j<5; j++){
-
 
 				// After, the table is read by:
 				// - columns (left or right keys)
@@ -521,17 +529,11 @@
 		 	}
 		}
 
-
-
  		if ($(".square td:contains(\"0\")").length == 0
  			&& !simulate){
-
-			simulateFourKeys();
-
+			
+			isMergePossible = isMergePossibleFn();
  			if (!isMergePossible){
-	 			isGameWonOrLose = true;
-		 		$('#overl').css({"z-index": "100"});
-		 		$('#msg').text("You loose! Too bad :(");
 		 		saveData();
 				return this;
  			}
@@ -546,10 +548,24 @@
 				if (!simulate){
 					$(".row-" + newCellx + " .col-" + newCelly).html(newValue).colorCell(true);
 					$(".row-" + newCellx + " .col-" + newCelly).removeClass('merged');
-				}	
+				}
+
+				isMergePossible = isMergePossibleFn();
+	 			if (!isMergePossible){
+			 		saveData();
+					return this;
+	 			}
+	 		}
+	 		else {
+	 			isGameWonOrLose = true;
+		 		$('#overl').css({"z-index": 100});
+		 		$('#msg').text("You loose! Too bad :(");
 	 		}	
  		}
-		saveData();
+ 		if (!simulate){
+			saveData(); 			
+		}
+
  		return this;
  	} 
 
@@ -562,18 +578,21 @@
  			"color": "#cdcdcd"
  		});
  		$("#currentScore").text(0);
-		$("#squaret").initSquare();
+		$("#squaret").initSquareData();
 		isGameWonOrLose = false;
-		hasOneCellMovedOrPopped = false;
 		isMergePossible = false;
- 		$('#overl').text("").css({"z-index": "-100"});
+
+ 		$('#overl').css({"z-index": "-100"});
+ 		$('#msg').text("");
+
+		saveData();
 
  		return this;
  	}
 
- 	$(window).resize(function(){
- 		sizeOverlay();
- 	});
+ 	// $(window).resize(function(){
+ 	// 	$("#overl").sizeOverlay();
+ 	// });
 
  	return this;
 
