@@ -102,8 +102,6 @@
 
 	function loadData(){
 
-		console.log("loadData");
-
 		var squareData_json = localStorage.getItem("squareData");
 		var squareData      = JSON.parse(squareData_json);
 
