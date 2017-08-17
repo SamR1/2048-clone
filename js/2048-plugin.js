@@ -18,7 +18,8 @@
 		"1024": "#648479",
 		"2048": "#475e57"
 	};
-	var isGameWon = false; 
+	var isGameWonOrLose = false; 
+	var hasOneCellMovedOrPopped = false;
 
 	//to get more chances to get a 2 instead of a 4
 	var initValues = [2, 2, 2, 2, 2, 2, 2, 4];
@@ -30,12 +31,20 @@
 	function randomPosition(){
 		var x = 10; // 0 is a correct position
 		var y = 10;
-		while ((x == 10) ||
-			   ($(".row-" + x + " .col-" + y).text() != 0)) {
-			x = Math.floor(Math.random() * 4);
-			y = Math.floor(Math.random() * 4);
+
+		if ($(".square td:contains(\"0\")").length > 0) {
+			while ((x == 10) ||
+				   ($(".row-" + x + " .col-" + y).text() != 0)) {
+				x = Math.floor(Math.random() * 4);
+				y = Math.floor(Math.random() * 4);
+			}
+			hasOneCellMovedOrPopped = true;
+			return {x: x, y: y};
 		}
-		return {x: x, y: y};
+		else{
+			hasOneCellMovedOrPopped = false;
+			return null;
+		}
 	};
  	
  	$.fn.initPage    = function(){
@@ -175,7 +184,7 @@
 
  	$.fn.moveCells   = function(key){
 
- 		if (isGameWon) {
+ 		if (isGameWonOrLose) {
  			return this;
  		}		
 
@@ -183,6 +192,7 @@
 		var initCol  = 0;
 		var offset   = 0;
 		var beginsBy = "";
+		hasOneCellMovedOrPopped = false;
 
  		switch (key){
  			case(37): // to the left
@@ -262,7 +272,6 @@
 
 		 	    		var isSameValue = false;
 		 	    		newCellValue = parseInt($(".row-" + nextRow + " .col-" + nextCol).text());
-
 	 	    		
 		 	    		if ( ( newCellValue == 0 )     
 		 	    	    ||	 ((currentCellValue == newCellValue) 
@@ -305,7 +314,7 @@
 						 			"background-color": "#ffffff", 
 						 			"color": "#2d2d2d"
 						 		});
-								isGameWon = true;
+								isGameWonOrLose = true;
 								alert("You win! Brava !!");
 								return this;
 							}
@@ -320,6 +329,7 @@
 
 								$(".row-" + currentRow + " .col-" + currentCol).text(0).colorCell();						
 							}
+							hasOneCellMovedOrPopped = true;
 		 	    		}  		
 		 	    	}
 
@@ -341,12 +351,19 @@
 				}
 		 	}
 		}
-
-		var newValue  = initValue();
- 		var pos       = randomPosition();
- 		var newCellx  = pos.x;
- 		var newCelly  = pos.y;
- 		$(".row-" + newCellx + " .col-" + newCelly).html(newValue).colorCell(true);
+	
+ 		var pos = randomPosition();
+ 		if (hasOneCellMovedOrPopped) {
+ 			var newValue  = initValue();
+			var newCellx  = pos.x;
+			var newCelly  = pos.y;
+			$(".row-" + newCellx + " .col-" + newCelly).html(newValue).colorCell(true);
+ 		}
+ 		else{
+ 			isGameWonOrLose = true;
+			alert("You loose! Too bad :(");
+			return this;
+ 		}
 
  		return this;
  	} 
@@ -359,7 +376,8 @@
  		});
  		$("#currentScore").text(0);
 		$("#squaret").initSquare();
-		isGameWon = false;
+		isGameWonOrLose = false;
+		hasOneCellMovedOrPopped = false;
 
  		return this;
  	}
