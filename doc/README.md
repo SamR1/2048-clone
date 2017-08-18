@@ -13,7 +13,8 @@ The game stopped when :
 * JQuery
 
 ### HTML structure
-Add a div with an id and the following lines in a javascript script:
+Add a div with an id where you want to append the square.
+Add the following lines in a Javascript script:
 
 ```javascript
 $(document).ready(function(){

@@ -40,7 +40,7 @@
 			}
 			return {x: x, y: y};
 		}
-		else{
+		else {
 			return null;
 		}
 	}
@@ -105,7 +105,7 @@
 		});			
 	}
 
-	$.fn.initCSS      = function(){
+	$.fn.initCSS        = function(){
 
 		$("html, body").css({
 			"font-family"     : "Arial, sans-serif",
@@ -157,7 +157,7 @@
 			"font"            : "bold 16px Arial",
 			"background"      : "#f5f5f5",
 			"color"           : "#555",
-			"border-radius"   : "2px",
+			"border-radius"   : "5px",
 			"width"           : "150px",
 			"border"          : "none"
 		});
@@ -176,7 +176,7 @@
 			"width"           : "600px",
 			"height"          : "600px",
 			"margin"          : "auto",
-			"text-align"      : "center",
+			"text-align"      : "center"
  		});
  		$(".square th, .square td").css({
  			"border"          : "15px solid #8a8a8a",
@@ -185,7 +185,8 @@
  		$(".square td").css({
  			"border"          : "15px solid #8a8a8a",
 			"background"      : "#cdcdcd",
-			"color"           : "#cdcdcd"
+			"color"           : "#cdcdcd",
+			"border-radius"   : "10px"
  		});
 
  		$("#msg").css({
@@ -201,12 +202,14 @@
  		return this;
  	};
 
-	$.fn.sizeOverlay   = function(){
+	$.fn.sizeOverlay    = function(){
 
-	 	var top    = $("#squarec").position().top;
- 		var left   = $("#squarec").position().left;
- 		var width  = $("#squarec").width();
- 		var height = $("#squarec").height();
+		var $squarec = $("#squarec");
+
+	 	var top    = $squarec.position().top;
+ 		var left   = $squarec.position().left;
+ 		var width  = $squarec.width();
+ 		var height = $squarec.height();
  		$(this)
  			.addClass('overlay')
  			.css({
@@ -222,12 +225,12 @@
 				"text-align"     : "center",
  				"z-index"        : "-100"
  			});
+		return this;
 	};
 
- 	$.fn.colorCell    = function(withFadeIn=false){
+ 	$.fn.colorCell      = function(withFadeIn=false){
 
-		if (withFadeIn && this.text() != 0) {
-	
+		if (withFadeIn && this.text() != 0) {	
 			this.css({ "opacity": 0 });
 			this.css({
  				"background-color": gradient[this.text()],
@@ -246,7 +249,6 @@
 				this.css({"color": "#474747"});
 			}
 		}
-
 		return this;
  	};
 
@@ -262,7 +264,6 @@
 	 		isMergePossibleFn();
  		}
  		else {
-
 	 		//fisrt number
 	 		var first   = initValue();
 	 		var pos     = randomPosition();
@@ -277,11 +278,10 @@
 	 		var secondy = pos.y;
 	 		$(".row-" + secondx + " .col-" + secondy).html(second).colorCell();
  		}
-
  		return this;
  	};
 
- 	$.fn.initPage     = function(elmt){
+ 	$.fn.initPage       = function(elmt){
 
 		$(elmt).append(
 			$('<div\>', {class: 'contnr'}).append(
@@ -344,13 +344,13 @@
 				)
 			)
 		);
-
 		$(document).initCSS();
 		$("#overl").sizeOverlay();
  		$("#squaret").initSquareData();
+ 		return this;
 	};
 
- 	$.fn.moveCells    = function(key, simulate=false){
+ 	$.fn.moveCells      = function(key, simulate=false){
 
  		if (isGameWonOrLose) {
  			return this;
@@ -420,10 +420,12 @@
 				// with the column 1 and checks if this cell can
 				// move to the column 0.
 				for (i=1; i<4; i++){
+		
+					var $currentCell     = $(".row-" + currentRow + " .col-" + currentCol);
+					var currentCellValue = parseInt($currentCell.text());
 
 					var nextRow;
 					var nextCol;
-					
 					if (beginsBy == "row") {
 						nextRow = currentRow;
 						nextCol = currentCol + (0 - offset);
@@ -432,17 +434,17 @@
 						nextRow = currentRow + (0 - offset);
 						nextCol = currentCol;
 					}
-
- 					currentCellValue = parseInt($(".row-" + currentRow + " .col-" + currentCol).text());
+					var $nextCell    = $(".row-" + nextRow    + " .col-" + nextCol);				
 
 		 	    	if ( currentCellValue != 0 ){
+						
+						var nextCellValue     = parseInt($nextCell.text());
+						var isCurrCellMerged  = $currentCell.hasClass("merged");
 
-						var isSameValue     = false;
-						var nextCellValue   = parseInt($(".row-" + nextRow + " .col-" + nextCol).text());
-						var hasClassMerged  = $(".row-" + currentRow + " .col-" + currentCol).hasClass("merged");
+						var areSameCellValues = (currentCellValue == nextCellValue);
 
 						if ( ( nextCellValue == 0 )     
-						||	 ((currentCellValue == nextCellValue) && (!hasClassMerged))
+						||	 ( areSameCellValues && (!isCurrCellMerged))
 						   ) {
 
 							// no need to continue further
@@ -452,37 +454,41 @@
 							}
 
 							// merge is possible
-							if ( currentCellValue == nextCellValue ){
+							if ( areSameCellValues ){
 
-								isSameValue = true;	
-								$("#currentScore").text(parseInt($("#currentScore").text()) + nextCellValue * 2);
-								if ( parseInt( $("#bestScore").text()) < parseInt( $("#currentScore").text()) ){
-									$("#bestScore").text($("#currentScore").text());
+								var $currentScore = $("#currentScore");
+								var currentScore  = parseInt($("#currentScore").text());
+								currentScore = currentScore + (nextCellValue * 2);
+								$currentScore.text(currentScore);
+
+								var $bestScore = $("#bestScore");
+								var bestScore  = parseInt($("#bestScore").text());
+
+								if ( bestScore < currentScore ){
+									$bestScore.text(currentScore);
 								}
-								$(".row-" + nextRow + " .col-" + nextCol).addClass("merged");								
+								$nextCell.addClass("merged");								
 							} 
 							else {
-								$(".row-" + newCellx + " .col-" + newCelly).removeClass('merged');
+								$nextCell.removeClass("merged");
 							}
 
 							nextCellValue = currentCellValue + nextCellValue;
-							// // for test only !!!
+							// for test only !!!
 							// var index = Math.floor(Math.random() * 6);
 							// if (winValue[index] == 2048) {
 							// 	nextCellValue = 2048;
 							// }
-							// // for test only !!!
-							$(".row-" + nextRow + " .col-" + nextCol).text(nextCellValue);
+							// for test only !!!
+							$nextCell.text(nextCellValue);
 
 							if ( nextCellValue == 2048 ) {
 
-								if ( $(".square td").text() != "0" ) {
-									$("this").css({ 
+								$(".square td:not(:contains(\"0\"))").css({ 
 										"background-color": "#2d2d2d", 
 										"color": "#ffffff"
 									});
-						 		}
-						 		$(".row-" + nextRow + " .col-" + nextCol).css({ 
+						 		$nextCell.css({ 
 						 			"background-color": "#ffffff", 
 						 			"color": "#2d2d2d"
 						 		});
@@ -493,17 +499,8 @@
 								return this;
 							}
 							else {
-
-								if (!simulate){
-
-									if (isSameValue){
-										$(".row-" + nextRow + " .col-" + nextCol).colorCell();
-									}
-									else {
-										$(".row-" + nextRow + " .col-" + nextCol).colorCell();
-									}
-									$(".row-" + currentRow + " .col-" + currentCol).text(0).colorCell();
-								}						
+								$currentCell.text(0).colorCell();
+								$nextCell.colorCell();				
 							}
 							hasOneCellMoved = true;
 		 				} // nextCellValue == 0 or != nextCellValue and 
@@ -527,49 +524,68 @@
 					currentCol++;
 				}
 		 	}
-		}
+		} // all possibles moves or merged done
 
- 		if ($(".square td:contains(\"0\")").length == 0
- 			&& !simulate){
+ 		// if it's a simulation, no need to go further
+ 		if (simulate) {
+ 			return this;
+ 		}
+
+ 		// if square is full
+ 		if ($(".square td:contains(\"0\")").length == 0){
 			
 			isMergePossible = isMergePossibleFn();
+
+			// if the square is full and moves are no more possible, 
+			// no need to continue further
  			if (!isMergePossible){
 		 		saveData();
+
+	 			isGameWonOrLose = true;
+		 		$('#overl').css({"z-index": 100});
+		 		$('#msg').text("You loose! Too bad :(");
+
 				return this;
  			}
  		}
 
+ 		// a new tile is added, only if a move was done (and the squre is
+ 		// not full, see previous condition)
  		if (hasOneCellMoved) {
 			var pos = randomPosition();
+
 	 		if (pos != null) {
 	 			var newValue  = initValue();
-				var newCellx  = pos.x;
-				var newCelly  = pos.y;
-				if (!simulate){
-					$(".row-" + newCellx + " .col-" + newCelly).html(newValue).colorCell(true);
-					$(".row-" + newCellx + " .col-" + newCelly).removeClass('merged');
-				}
+				var newCellX  = pos.x;
+				var newCellY  = pos.y;
 
+				var $poppedCell  = $(".row-" + newCellX + " .col-" + newCellY);
+
+				$poppedCell.html(newValue)
+				           .colorCell(true)
+				           .removeClass('merged');
+
+				// if no move or merge are possible after a new tile popped, the 
+				// player looses
 				isMergePossible = isMergePossibleFn();
 	 			if (!isMergePossible){
 			 		saveData();
 					return this;
 	 			}
 	 		}
+	 		// security (normally, if the square is full and no move is possible
+	 		// this code is not reached)
 	 		else {
 	 			isGameWonOrLose = true;
 		 		$('#overl').css({"z-index": 100});
 		 		$('#msg').text("You loose! Too bad :(");
 	 		}	
- 		}
- 		if (!simulate){
-			saveData(); 			
-		}
-
+ 		}		
+		saveData();
  		return this;
  	} 
 
- 	$.fn.resetSquare  = function() {
+ 	$.fn.resetSquare    = function() {
 
  		localStorage.removeItem("squareData");
 
@@ -586,7 +602,6 @@
  		$('#msg').text("");
 
 		saveData();
-
  		return this;
  	}
 
