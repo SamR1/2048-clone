@@ -63,7 +63,7 @@
 
 	 			isGameWonOrLose = true;
 		 		$('#overl').css({"z-index": 100});
-		 		$('#msg').text("You loose! Too bad :(");
+		 		$('#msg').html("You loose! <img src='img/sad.png'>");
  			}
  		}
  		return isMergePossible;
@@ -261,7 +261,24 @@
  		if( localStorage.getItem("squareData") != undefined ){
  			loadData();
 
-	 		isMergePossibleFn();
+			if ($(".square td:contains(\"2048\")").length > 0) {
+
+				$(".square td:not(:contains(\"0\"))").css({ 
+					"background-color": "#2d2d2d", 
+					"color": "#ffffff"
+				});
+				$(".square td:contains(\"2048\")").css({ 
+					"background-color": "#ffffff", 
+					"color": "#2d2d2d"
+				});
+				isGameWonOrLose = true;
+				$('#overl').css({"z-index": "100"});
+				$('#msg').html("You win! <img src='img/happy.png'>");
+			}
+			else {
+	 			isMergePossibleFn();				
+			}
+
  		}
  		else {
 	 		//fisrt number
@@ -494,7 +511,7 @@
 						 		});
 								isGameWonOrLose = true;
 						 		$('#overl').css({"z-index": "100"});
- 								$('#msg').text("You win! Brava !!");
+ 								$('#msg').html("You win! <img src='img/happy.png'>");
  								saveData();
 								return this;
 							}
@@ -543,7 +560,7 @@
 
 	 			isGameWonOrLose = true;
 		 		$('#overl').css({"z-index": 100});
-		 		$('#msg').text("You loose! Too bad :(");
+		 		$('#msg').html("You loose! <img src='img/sad.png'>");
 
 				return this;
  			}
@@ -578,7 +595,7 @@
 	 		else {
 	 			isGameWonOrLose = true;
 		 		$('#overl').css({"z-index": 100});
-		 		$('#msg').text("You loose! Too bad :(");
+		 		$('#msg').html("You loose! <img src='img/sad.png'>");
 	 		}	
  		}		
 		saveData();
@@ -589,9 +606,9 @@
 
  		localStorage.removeItem("squareData");
 
- 		$(".square td").text(0).css({ 
- 			"background-color": "#cdcdcd", 
- 			"color": "#cdcdcd"
+ 		$(".square td").text(0)
+ 		               .css({"background-color": "#cdcdcd", 
+ 							 "color": "#cdcdcd"
  		});
  		$("#currentScore").text(0);
 		$("#squaret").initSquareData();

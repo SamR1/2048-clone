@@ -1,4 +1,5 @@
 $(document).ready(function(){
+	
 	$(document).initPage("#squareLocation");
 	
 	$("#newGame").click(function(){
