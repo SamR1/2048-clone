@@ -20,6 +20,8 @@
 	};
 	var isGameWonOrLose = false; 
 	var isMergePossible = false; 
+	var msgWin  = "You win! <img src='img/happy.png'>";
+	var msgLose = "You loose! <img src='img/sad.png'>";
 
 	//to get more chances to get a 2 instead of a 4
 	var initValues = [2, 2, 2, 2, 2, 2, 2, 4];
@@ -63,7 +65,7 @@
 
 	 			isGameWonOrLose = true;
 		 		$('#overl').css({"z-index": 100});
-		 		$('#msg').html("You loose! <img src='img/sad.png'>");
+		 		$('#msg').html(msgLose);
  			}
  		}
  		return isMergePossible;
@@ -263,6 +265,7 @@
 
 			if ($(".square td:contains(\"2048\")").length > 0) {
 
+
 				$(".square td:not(:contains(\"0\"))").css({ 
 					"background-color": "#2d2d2d", 
 					"color": "#ffffff"
@@ -273,7 +276,7 @@
 				});
 				isGameWonOrLose = true;
 				$('#overl').css({"z-index": "100"});
-				$('#msg').html("You win! <img src='img/happy.png'>");
+				$('#msg').html(msgWin);
 			}
 			else {
 	 			isMergePossibleFn();				
@@ -511,7 +514,7 @@
 						 		});
 								isGameWonOrLose = true;
 						 		$('#overl').css({"z-index": "100"});
- 								$('#msg').html("You win! <img src='img/happy.png'>");
+ 								$('#msg').html(msgWin);
  								saveData();
 								return this;
 							}
@@ -551,19 +554,11 @@
  		// if square is full
  		if ($(".square td:contains(\"0\")").length == 0){
 			
-			isMergePossible = isMergePossibleFn();
-
-			// if the square is full and moves are no more possible, 
-			// no need to continue further
- 			if (!isMergePossible){
-		 		saveData();
-
-	 			isGameWonOrLose = true;
-		 		$('#overl').css({"z-index": 100});
-		 		$('#msg').html("You loose! <img src='img/sad.png'>");
-
-				return this;
- 			}
+				isMergePossible = isMergePossibleFn();
+	 			if (!isMergePossible){
+			 		saveData();
+					return this;
+	 			}
  		}
 
  		// a new tile is added, only if a move was done (and the squre is
@@ -595,7 +590,7 @@
 	 		else {
 	 			isGameWonOrLose = true;
 		 		$('#overl').css({"z-index": 100});
-		 		$('#msg').html("You loose! <img src='img/sad.png'>");
+		 		$('#msg').html(msgLose);
 	 		}	
  		}		
 		saveData();
