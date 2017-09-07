@@ -66,8 +66,8 @@
                 if (!isMergePossible){
 
                     isGameWonOrLose = true;
-                    $('#overl').css({"z-index": 100});
-                    $('#msg').html(msgLose);
+                    $("#overl").css({"z-index": 100});
+                    $("#msg").html(msgLose);
                 }
             }
             return isMergePossible;
@@ -81,25 +81,25 @@
             };
             $(".square tr").each(function(){
                 var tdValues = [];
-                var trclass  = $(this).attr('class');
+                var trclass  = $(this).attr("class");
                 $(this).children().each(function () {
                     tdValues.push($(this).text());
                 });
                 squareData[trclass] = tdValues;
             });
 
-            var squareData_json = JSON.stringify(squareData);
-            localStorage.setItem("squareData",squareData_json);
+            var squareDataJson = JSON.stringify(squareData);
+            localStorage.setItem("squareData",squareDataJson);
         }
 
         function loadData(){
-            var squareData_json = localStorage.getItem("squareData");
-            var squareData      = JSON.parse(squareData_json);
+            var squareDataJson = localStorage.getItem("squareData");
+            var squareData     = JSON.parse(squareDataJson);
 
             $("#currentScore").text(squareData["score"]);
 
             $(".square tr").each(function(){
-                var trclass  = $(this).attr('class');
+                var trclass  = $(this).attr("class");
                 var i = 0;
                 $(this).children().each(function () {
                     $(this).text(squareData[trclass][i]);
@@ -213,8 +213,8 @@
             var left   = $squarec.position().left;
             var width  = $squarec.width();
             var height = $squarec.height();
-            $('#overl')
-                .addClass('overlay')
+            $("#overl")
+                .addClass("overlay")
                 .css({
                     "position"       : "absolute",
                     "top"            : top,
@@ -275,8 +275,8 @@
                         "color": "#2d2d2d"
                     });
                     isGameWonOrLose = true;
-                    $('#overl').css({"z-index": "100"});
-                    $('#msg').html(msgWin);
+                    $("#overl").css({"z-index": "100"});
+                    $("#msg").html(msgWin);
                 }
                 else {
                     isMergePossibleFn();
@@ -303,63 +303,63 @@
         function initPage(elmt){
 
             $(elmt).append(
-                $('<div\>', {class: 'contnr'}).append(
-                    $('<div\>', {id: 'score'})
+                $("<div\>", {class: "contnr"}).append(
+                    $("<div\>", {id: "score"})
                 )
             );
             $("#score").append(
-                $('<table\>', {class: 'scoretab'}).append(
-                    $('<tr\>').append(
-                        $('<td\>', {rowspan: '2'}).append(
-                            $('<button\>', {id: 'newGame', text: 'New Game'})
+                $("<table\>", {class: "scoretab"}).append(
+                    $("<tr\>").append(
+                        $("<td\>", {rowspan: "2"}).append(
+                            $("<button\>", {id: "newGame", text: "New Game"})
                         )
                     ).append(
-                        $('<td\>', {class: 'score', text: 'Score'})
+                        $("<td\>", {class: "score", text: "Score"})
                     ).append(
-                        $('<td\>', {class: 'score', text: 'Best Score'})
+                        $("<td\>", {class: "score", text: "Best Score"})
                     )
                 ).append(
-                    $('<tr\>').append(
-                        $('<td\>', {id: 'currentScore', text: '0'})
+                    $("<tr\>").append(
+                        $("<td\>", {id: "currentScore", text: "0"})
                     ).append(
-                        $('<td\>', {id: 'bestScore', text: '0'})
+                        $("<td\>", {id: "bestScore", text: "0"})
                     )
                 )
             );
 
             $(elmt).append(
-                $('<div\>', {class: 'contnr'}).append(
-                    $('<div\>', {id: 'squarec'})
+                $("<div\>", {class: "contnr"}).append(
+                    $("<div\>", {id: "squarec"})
                 ).append(
-                    $('<div\>', {id: 'overl'}).append(
-                        $('<div\>', {id: 'msg'})
+                    $("<div\>", {id: "overl"}).append(
+                        $("<div\>", {id: "msg"})
                     )
                 )
             );
-            $('#squarec').append(
-                $('<table\>', {class: 'square', id: 'squaret'})
+            $("#squarec").append(
+                $("<table\>", {class: "square", id: "squaret"})
             );
 
             for (i=0; i<4; i++){
-                $('#squaret').append(
-                    $('<tr\>', {class: 'row-' + i}).append(
-                        $('<td\>', {class: 'col-0', text: '0'})
+                $("#squaret").append(
+                    $("<tr\>", {class: "row-" + i}).append(
+                        $("<td\>", {class: "col-0", text: "0"})
                     ).append(
-                        $('<td\>', {class: 'col-1', text: '0'})
+                        $("<td\>", {class: "col-1", text: "0"})
                     ).append(
-                        $('<td\>', {class: 'col-2', text: '0'})
+                        $("<td\>", {class: "col-2", text: "0"})
                     ).append(
-                        $('<td\>', {class: 'col-3', text: '0'})
+                        $("<td\>", {class: "col-3", text: "0"})
                     )
                 );
             }
 
             $(elmt).append(
-                $('<div\>', {class: 'contnr'}).append(
-                    $('<div\>', {id: 'how', html:
-                        '<strong>How to play</strong>: Use your arrow keys to ' +
-                        'move the tiles.<br>When two tiles with the same number' +
-                        ' touch, they <strong>merge into one</strong>! '}
+                $("<div\>", {class: "contnr"}).append(
+                    $("<div\>", {id: "how", html:
+                        "<strong>How to play</strong>: Use your arrow keys to " +
+                        "move the tiles.<br>When two tiles with the same number" +
+                        " touch, they <strong>merge into one</strong>! "}
                     )
                 )
             );
@@ -506,8 +506,8 @@
                                         "color": "#2d2d2d"
                                     });
                                     isGameWonOrLose = true;
-                                    $('#overl').css({"z-index": "100"});
-                                    $('#msg').html(msgWin);
+                                    $("#overl").css({"z-index": "100"});
+                                    $("#msg").html(msgWin);
                                     saveData();
                                     return;
                                 }
@@ -568,7 +568,7 @@
 
                     $poppedCell.html(newValue)
                         .colorCell(true)
-                        .removeClass('merged');
+                        .removeClass("merged");
 
                     // if no move or merge are possible after a new tile popped, the
                     // player looses
@@ -582,8 +582,8 @@
                 // this code is not reached)
                 else {
                     isGameWonOrLose = true;
-                    $('#overl').css({"z-index": 100});
-                    $('#msg').html(msgLose);
+                    $("#overl").css({"z-index": 100});
+                    $("#msg").html(msgLose);
                 }
             }
             saveData();
@@ -602,8 +602,8 @@
             isGameWonOrLose = false;
             isMergePossible = false;
 
-            $('#overl').css({"z-index": "-100"});
-            $('#msg').text("");
+            $("#overl").css({"z-index": "-100"});
+            $("#msg").text("");
 
             saveData();
         }
@@ -616,7 +616,6 @@
 
         // use of keydown instead of keypress for Chromium compatibility
         $(document).keydown(function(e){
-            console.log(e.which);
             //for firefox : use of keyCode
             if (e.keyCode > 36 && e.keyCode < 41 ){
                 moveCells(e.keyCode);
