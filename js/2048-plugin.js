@@ -51,7 +51,7 @@
 
         function simulateFourKeys(){
             for (key=37; key<41; key++){
-                $("#squaret").moveCells(key, true);
+                moveCells(key, true);
                 if (isMergePossible) {
                     return;
                 }
@@ -77,11 +77,11 @@
             localStorage.setItem("bestScore",$("#bestScore").text());
 
             var squareData = {
-                "score" : $("#currentScore").text(),
-            }
+                "score" : $("#currentScore").text()
+            };
             $(".square tr").each(function(){
                 var tdValues = [];
-                var trclass  = $(this).attr('class')
+                var trclass  = $(this).attr('class');
                 $(this).children().each(function () {
                     tdValues.push($(this).text());
                 });
@@ -99,7 +99,7 @@
             $("#currentScore").text(squareData["score"]);
 
             $(".square tr").each(function(){
-                var trclass  = $(this).attr('class')
+                var trclass  = $(this).attr('class');
                 var i = 0;
                 $(this).children().each(function () {
                     $(this).text(squareData[trclass][i]);
@@ -109,7 +109,7 @@
             });
         }
 
-        $.fn.initCSS        = function(){
+        function initCSS(){
 
             $("html, body").css({
                 "font-family"     : "Arial, sans-serif",
@@ -153,7 +153,7 @@
                 "width"           : "100%",
                 "text-align"      : "center",
                 "font"            : "bold 20px Arial",
-                "color"           : "#555",
+                "color"           : "#555"
             });
             $("button").css({
                 "cursor"          : "pointer",
@@ -171,7 +171,7 @@
             });
 
             $(".squarec").css({
-                "position"        : "fixed",
+                "position"        : "fixed"
             });
             $(".square").css({
                 "table-layout"    : "fixed",
@@ -203,10 +203,9 @@
                 "font"            : "18px Arial"
             });
 
-            return this;
-        };
+        }
 
-        $.fn.sizeOverlay    = function(){
+        function sizeOverlay(){
 
             var $squarec = $("#squarec");
 
@@ -214,7 +213,7 @@
             var left   = $squarec.position().left;
             var width  = $squarec.width();
             var height = $squarec.height();
-            $(this)
+            $('#overl')
                 .addClass('overlay')
                 .css({
                     "position"       : "absolute",
@@ -229,22 +228,21 @@
                     "text-align"     : "center",
                     "z-index"        : "-100"
                 });
-            return this;
-        };
+        }
 
         $.fn.colorCell      = function(withFadeIn=false){
 
             if (withFadeIn && this.text() != 0) {
                 this.css({ "opacity": 0 });
                 this.css({
-                    "background-color": gradient[this.text()],
+                    "background-color": gradient[this.text()]
                 });
                 this.css({"color": "#474747"});
                 this.animate({ "opacity": 1 });
             }
             else{
                 this.css({
-                    "background-color": gradient[this.text()],
+                    "background-color": gradient[this.text()]
                 });
                 if (this.text() == 0){
                     this.css({"color": "#cdcdcd"});
@@ -256,7 +254,7 @@
             return this;
         };
 
-        $.fn.initSquareData = function(){
+        function initSquareData(){
 
             if( localStorage.getItem("bestScore") != undefined ){
                 $("#bestScore").text(localStorage.getItem("bestScore"));
@@ -295,15 +293,14 @@
 
                 //second number
                 var second  = initValue();
-                var pos     = randomPosition();
+                pos         = randomPosition();
                 var secondx = pos.x;
                 var secondy = pos.y;
                 $(".row-" + secondx + " .col-" + secondy).html(second).colorCell();
             }
-            return this;
-        };
+        }
 
-        $.fn.initPage       = function(elmt){
+        function initPage(elmt){
 
             $(elmt).append(
                 $('<div\>', {class: 'contnr'}).append(
@@ -355,7 +352,7 @@
                         $('<td\>', {class: 'col-3', text: '0'})
                     )
                 );
-            };
+            }
 
             $(elmt).append(
                 $('<div\>', {class: 'contnr'}).append(
@@ -366,16 +363,15 @@
                     )
                 )
             );
-            $(document).initCSS();
-            $("#overl").sizeOverlay();
-            $("#squaret").initSquareData();
-            return this;
-        };
+            initCSS();
+            sizeOverlay();
+            initSquareData();
+        }
 
-        $.fn.moveCells      = function(key, simulate=false){
+        function moveCells(key, simulate=false){
 
             if (isGameWonOrLose) {
-                return this;
+                return;
             }
 
             var initRow  = 0;
@@ -412,11 +408,6 @@
                     offset   = -1;
                     beginsBy = "col";
                     break;
-
-                default:
-                    // in case the function is called with
-                    // others keys
-                    return this;
             }
 
             $(".square td").removeClass("merged");
@@ -472,7 +463,7 @@
                                 // no need to continue further
                                 if (simulate) {
                                     isMergePossible = true;
-                                    return this;
+                                    return;
                                 }
 
                                 // merge is possible
@@ -518,7 +509,7 @@
                                     $('#overl').css({"z-index": "100"});
                                     $('#msg').html(msgWin);
                                     saveData();
-                                    return this;
+                                    return;
                                 }
                                 else {
                                     $currentCell.text(0).colorCell();
@@ -550,7 +541,7 @@
 
             // if it's a simulation, no need to go further
             if (simulate) {
-                return this;
+                return;
             }
 
             // if square is full
@@ -559,7 +550,7 @@
                 isMergePossible = isMergePossibleFn();
                 if (!isMergePossible){
                     saveData();
-                    return this;
+                    return;
                 }
             }
 
@@ -568,7 +559,7 @@
             if (hasOneCellMoved) {
                 var pos = randomPosition();
 
-                if (pos != null) {
+                if (pos !== null) {
                     var newValue  = initValue();
                     var newCellX  = pos.x;
                     var newCellY  = pos.y;
@@ -584,7 +575,7 @@
                     isMergePossible = isMergePossibleFn();
                     if (!isMergePossible){
                         saveData();
-                        return this;
+                        return;
                     }
                 }
                 // security (normally, if the square is full and no move is possible
@@ -596,10 +587,9 @@
                 }
             }
             saveData();
-            return this;
         }
 
-        $.fn.resetSquare    = function() {
+        function resetSquare() {
 
             localStorage.removeItem("squareData");
 
@@ -608,7 +598,7 @@
                     "color": "#cdcdcd"
                 });
             $("#currentScore").text(0);
-            $("#squaret").initSquareData();
+            initSquareData();
             isGameWonOrLose = false;
             isMergePossible = false;
 
@@ -616,23 +606,20 @@
             $('#msg').text("");
 
             saveData();
-            return this;
         }
 
-        // $(window).resize(function(){
-        // 	$("#overl").sizeOverlay();
-        // });
-
-        $(document).initPage("#squareLocation");
+        initPage("#squareLocation");
 
         $("#newGame").click(function(){
-            $("#squaret").resetSquare();
+            resetSquare();
         });
 
-        $(document).keypress(function(e){
+        // use of keydown instead of keypress for Chromium compatibility
+        $(document).keydown(function(e){
+            console.log(e.which);
             //for firefox : use of keyCode
             if (e.keyCode > 36 && e.keyCode < 41 ){
-                $("#squaret").moveCells(e.keyCode);
+                moveCells(e.keyCode);
             }
         });
 
