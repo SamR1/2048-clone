@@ -1,6 +1,6 @@
-(function ( $ ) {
+(function ($) {
 
-    $.fn.my2048=function(){
+    $.fn.my2048 = function () {
 
         // //for test only !!!
         // var winValue = [2, 2, 2, 2, 2, 2048];
@@ -50,7 +50,8 @@
         }
 
         function simulateFourKeys(){
-            for (key=37; key<41; key++){
+            var key;
+            for (key=37; key<41; key+=1){
                 moveCells(key, true);
                 if (isMergePossible) {
                     return;
@@ -95,9 +96,6 @@
         function loadData(squareDataJson){
             //var squareDataJson = localStorage.getItem("squareData");
             var squareData     = JSON.parse(squareDataJson);
-            console.log("squareData");
-            console.log(squareData);
-
             $("#currentScore").text(squareData.score);
 
             $(".square tr").each(function(){
@@ -106,7 +104,7 @@
                 $(this).children().each(function () {
                     $(this).text(squareData[trclass][i]);
                     $(this).colorCell();
-                    i++;
+                    i+=1;
                 });
             });
         }
@@ -375,7 +373,11 @@
             initSquareData();
         }
 
-        function moveCells(key, simulate=false){
+        function moveCells(key, simulate){
+
+            if (arguments.length === 1){
+                simulate = false;
+            }
 
             if (isGameWonOrLose) {
                 return;
@@ -386,6 +388,8 @@
             var offset   = 0;
             var beginsBy = "";
             var hasOneCellMoved  = false;
+            var $currentScore = $("#currentScore");
+            var $bestScore = $("#bestScore");
 
             switch (key){
                 case(37): // to the left
@@ -419,18 +423,31 @@
 
             $(".square td").removeClass("merged");
 
+            var i;
+            var j;
+            var currentRow;
+            var currentCol;
+            var $currentCell;
+            var currentCellValue;
+            var nextRow;
+            var nextCol;
+            var $nextCell;
+            var nextCellValue;
+            var isCurrCellMerged;
+            var areSameCellValues;
+            var currentScore;
+            var bestScore;
             // A cell can move up to 3 times
             var k;
             for (k=1; k<4; k+=1){
 
-                var currentRow = initRow;
-                var currentCol = initCol;
+                currentRow = initRow;
+                currentCol = initCol;
 
                 // According to the key, the table is first read by:
                 // - rows (left or right keys)
                 // - columns (up or down keys)
                 // (4 by 4 square)
-                var j;
                 for (j=1; j<5; j+=1){
 
                     // After, the table is read by:
@@ -441,14 +458,11 @@
                     // Example: if the left key is pressed, it begins
                     // with the column 1 and checks if this cell can
                     // move to the column 0.
-                    var i;
                     for (i=1; i<4; i+=1){
 
-                        var $currentCell     = $(".row-" + currentRow + " .col-" + currentCol);
-                        var currentCellValue = parseInt($currentCell.text());
+                        $currentCell     = $(".row-" + currentRow + " .col-" + currentCol);
+                        currentCellValue = parseInt($currentCell.text());
 
-                        var nextRow;
-                        var nextCol;
                         if (beginsBy === "row") {
                             nextRow = currentRow;
                             nextCol = currentCol + (0 - offset);
@@ -457,14 +471,14 @@
                             nextRow = currentRow + (0 - offset);
                             nextCol = currentCol;
                         }
-                        var $nextCell    = $(".row-" + nextRow    + " .col-" + nextCol);
+                        $nextCell    = $(".row-" + nextRow    + " .col-" + nextCol);
 
                         if ( currentCellValue !== 0 ){
 
-                            var nextCellValue     = parseInt($nextCell.text());
-                            var isCurrCellMerged  = $currentCell.hasClass("merged");
+                            nextCellValue     = parseInt($nextCell.text());
+                            isCurrCellMerged  = $currentCell.hasClass("merged");
 
-                            var areSameCellValues = (currentCellValue === nextCellValue);
+                            areSameCellValues = (currentCellValue === nextCellValue);
 
                             if ( ( nextCellValue === 0 )
                                 || ( areSameCellValues && (!isCurrCellMerged))
@@ -479,13 +493,11 @@
                                 // merge is possible
                                 if ( areSameCellValues ){
 
-                                    var $currentScore = $("#currentScore");
-                                    var currentScore  = parseInt($currentScore.text());
-                                    currentScore = currentScore + (nextCellValue * 2);
+                                    currentScore = parseInt($currentScore.text());
+                                    currentScore += (nextCellValue * 2);
                                     $currentScore.text(currentScore);
 
-                                    var $bestScore = $("#bestScore");
-                                    var bestScore  = parseInt($bestScore.text());
+                                    bestScore  = parseInt($bestScore.text());
 
                                     if ( bestScore < currentScore ){
                                         $bestScore.text(currentScore);
@@ -521,10 +533,8 @@
                                     saveData();
                                     return;
                                 }
-                                else {
-                                    $currentCell.text(0).colorCell();
-                                    $nextCell.colorCell();
-                                }
+                                $currentCell.text(0).colorCell();
+                                $nextCell.colorCell();
                                 hasOneCellMoved = true;
                             } // nextCellValue == 0 or != nextCellValue and
                               // nextCellValue not already merged
@@ -539,12 +549,12 @@
                     }
 
                     if (beginsBy === "row") {
-                        currentRow++;
+                        currentRow += 1;
                         currentCol = initCol;
                     }
                     else {
                         currentRow = initRow;
-                        currentCol++;
+                        currentCol += 1;
                     }
                 }
             } // all possibles moves or merged done
