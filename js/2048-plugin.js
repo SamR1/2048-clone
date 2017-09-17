@@ -1,6 +1,6 @@
-(function ( $ ) {
+(function ($) {
 
-    $.fn.my2048=function(){
+    $.fn.my2048 = function () {
 
         // //for test only !!!
         // var winValue = [2, 2, 2, 2, 2, 2048];
@@ -37,8 +37,8 @@
             var y = 10;
 
             if ($(".square td:contains(\"0\")").length > 0) {
-                while ((x == 10) ||
-                ($(".row-" + x + " .col-" + y).text() != 0)) {
+                while ((x === 10) ||
+                ($(".row-" + x + " .col-" + y).text() !== "0")) {
                     x = Math.floor(Math.random() * 4);
                     y = Math.floor(Math.random() * 4);
                 }
@@ -50,7 +50,8 @@
         }
 
         function simulateFourKeys(){
-            for (key=37; key<41; key++){
+            var key;
+            for (key=37; key<41; key+=1){
                 moveCells(key, true);
                 if (isMergePossible) {
                     return;
@@ -59,7 +60,7 @@
         }
 
         function isMergePossibleFn(){
-            if ($(".square td:contains(\"0\")").length == 0){
+            if ($(".square td:contains(\"0\")").length === 0){
                 isMergePossible = false;
                 simulateFourKeys();
 
@@ -92,11 +93,10 @@
             localStorage.setItem("squareData",squareDataJson);
         }
 
-        function loadData(){
-            var squareDataJson = localStorage.getItem("squareData");
+        function loadData(squareDataJson){
+            //var squareDataJson = localStorage.getItem("squareData");
             var squareData     = JSON.parse(squareDataJson);
-
-            $("#currentScore").text(squareData["score"]);
+            $("#currentScore").text(squareData.score);
 
             $(".square tr").each(function(){
                 var trclass  = $(this).attr("class");
@@ -104,7 +104,7 @@
                 $(this).children().each(function () {
                     $(this).text(squareData[trclass][i]);
                     $(this).colorCell();
-                    i++;
+                    i+=1;
                 });
             });
         }
@@ -230,9 +230,13 @@
                 });
         }
 
-        $.fn.colorCell      = function(withFadeIn=false){
+        $.fn.colorCell      = function(withFadeIn){
 
-            if (withFadeIn && this.text() != 0) {
+            if (arguments.length === 0){
+                withFadeIn = false;
+            }
+
+            if (withFadeIn && this.text() !== "0") {
                 this.css({ "opacity": 0 });
                 this.css({
                     "background-color": gradient[this.text()]
@@ -244,7 +248,7 @@
                 this.css({
                     "background-color": gradient[this.text()]
                 });
-                if (this.text() == 0){
+                if (this.text() === "0"){
                     this.css({"color": "#cdcdcd"});
                 }
                 else{
@@ -256,12 +260,12 @@
 
         function initSquareData(){
 
-            if( localStorage.getItem("bestScore") != undefined ){
+            if( localStorage.getItem("bestScore") !== null ){
                 $("#bestScore").text(localStorage.getItem("bestScore"));
             }
 
-            if( localStorage.getItem("squareData") != undefined ){
-                loadData();
+            if( localStorage.getItem("squareData") !== null ){
+                loadData(localStorage.getItem("squareData"));
 
                 if ($(".square td:contains(\"2048\")").length > 0) {
 
@@ -284,7 +288,7 @@
 
             }
             else {
-                //fisrt number
+                //first number
                 var first   = initValue();
                 var pos     = randomPosition();
                 var firstx  = pos.x;
@@ -340,7 +344,8 @@
                 $("<table\>", {class: "square", id: "squaret"})
             );
 
-            for (i=0; i<4; i++){
+            var i;
+            for (i=0; i<4; i+=1){
                 $("#squaret").append(
                     $("<tr\>", {class: "row-" + i}).append(
                         $("<td\>", {class: "col-0", text: "0"})
@@ -368,7 +373,11 @@
             initSquareData();
         }
 
-        function moveCells(key, simulate=false){
+        function moveCells(key, simulate){
+
+            if (arguments.length === 1){
+                simulate = false;
+            }
 
             if (isGameWonOrLose) {
                 return;
@@ -379,6 +388,8 @@
             var offset   = 0;
             var beginsBy = "";
             var hasOneCellMoved  = false;
+            var $currentScore = $("#currentScore");
+            var $bestScore = $("#bestScore");
 
             switch (key){
                 case(37): // to the left
@@ -412,34 +423,47 @@
 
             $(".square td").removeClass("merged");
 
+            var i;
+            var j;
+            var currentRow;
+            var currentCol;
+            var $currentCell;
+            var currentCellValue;
+            var nextRow;
+            var nextCol;
+            var $nextCell;
+            var nextCellValue;
+            var isCurrCellMerged;
+            var areSameCellValues;
+            var currentScore;
+            var bestScore;
             // A cell can move up to 3 times
-            for (k=1; k<4; k++){
+            var k;
+            for (k=1; k<4; k+=1){
 
-                var currentRow = initRow;
-                var currentCol = initCol;
+                currentRow = initRow;
+                currentCol = initCol;
 
                 // According to the key, the table is first read by:
                 // - rows (left or right keys)
-                // - columns (up or downt keys)
+                // - columns (up or down keys)
                 // (4 by 4 square)
-                for (j=1; j<5; j++){
+                for (j=1; j<5; j+=1){
 
                     // After, the table is read by:
                     // - columns (left or right keys)
-                    // - rows (up or downt keys)
-                    // It begins with the farest element, that can move
+                    // - rows (up or down keys)
+                    // It begins with the farthest element, that can move
                     // if the next cell is empty
                     // Example: if the left key is pressed, it begins
                     // with the column 1 and checks if this cell can
                     // move to the column 0.
-                    for (i=1; i<4; i++){
+                    for (i=1; i<4; i+=1){
 
-                        var $currentCell     = $(".row-" + currentRow + " .col-" + currentCol);
-                        var currentCellValue = parseInt($currentCell.text());
+                        $currentCell     = $(".row-" + currentRow + " .col-" + currentCol);
+                        currentCellValue = parseInt($currentCell.text());
 
-                        var nextRow;
-                        var nextCol;
-                        if (beginsBy == "row") {
+                        if (beginsBy === "row") {
                             nextRow = currentRow;
                             nextCol = currentCol + (0 - offset);
                         }
@@ -447,17 +471,17 @@
                             nextRow = currentRow + (0 - offset);
                             nextCol = currentCol;
                         }
-                        var $nextCell    = $(".row-" + nextRow    + " .col-" + nextCol);
+                        $nextCell    = $(".row-" + nextRow    + " .col-" + nextCol);
 
-                        if ( currentCellValue != 0 ){
+                        if ( currentCellValue !== 0 ){
 
-                            var nextCellValue     = parseInt($nextCell.text());
-                            var isCurrCellMerged  = $currentCell.hasClass("merged");
+                            nextCellValue     = parseInt($nextCell.text());
+                            isCurrCellMerged  = $currentCell.hasClass("merged");
 
-                            var areSameCellValues = (currentCellValue == nextCellValue);
+                            areSameCellValues = (currentCellValue === nextCellValue);
 
-                            if ( ( nextCellValue == 0 )
-                                ||	 ( areSameCellValues && (!isCurrCellMerged))
+                            if ( ( nextCellValue === 0 )
+                                || ( areSameCellValues && (!isCurrCellMerged))
                             ) {
 
                                 // no need to continue further
@@ -469,13 +493,11 @@
                                 // merge is possible
                                 if ( areSameCellValues ){
 
-                                    var $currentScore = $("#currentScore");
-                                    var currentScore  = parseInt($("#currentScore").text());
-                                    currentScore = currentScore + (nextCellValue * 2);
+                                    currentScore = parseInt($currentScore.text());
+                                    currentScore += (nextCellValue * 2);
                                     $currentScore.text(currentScore);
 
-                                    var $bestScore = $("#bestScore");
-                                    var bestScore  = parseInt($("#bestScore").text());
+                                    bestScore  = parseInt($bestScore.text());
 
                                     if ( bestScore < currentScore ){
                                         $bestScore.text(currentScore);
@@ -490,12 +512,12 @@
                                 // for test only !!!
                                 // var index = Math.floor(Math.random() * 6);
                                 // if (winValue[index] == 2048) {
-                                // 	nextCellValue = 2048;
+                                //  nextCellValue = 2048;
                                 // }
                                 // for test only !!!
                                 $nextCell.text(nextCellValue);
 
-                                if ( nextCellValue == 2048 ) {
+                                if ( nextCellValue === 2048 ) {
 
                                     $(".square td:not(:contains(\"0\"))").css({
                                         "background-color": "#2d2d2d",
@@ -511,16 +533,14 @@
                                     saveData();
                                     return;
                                 }
-                                else {
-                                    $currentCell.text(0).colorCell();
-                                    $nextCell.colorCell();
-                                }
+                                $currentCell.text(0).colorCell();
+                                $nextCell.colorCell();
                                 hasOneCellMoved = true;
                             } // nextCellValue == 0 or != nextCellValue and
                               // nextCellValue not already merged
                         } // currentCellValue != 0
 
-                        if (beginsBy == "row") {
+                        if (beginsBy === "row") {
                             currentCol += offset;
                         }
                         else {
@@ -528,13 +548,13 @@
                         }
                     }
 
-                    if (beginsBy == "row") {
-                        currentRow++;
+                    if (beginsBy === "row") {
+                        currentRow += 1;
                         currentCol = initCol;
                     }
                     else {
                         currentRow = initRow;
-                        currentCol++;
+                        currentCol += 1;
                     }
                 }
             } // all possibles moves or merged done
@@ -545,7 +565,7 @@
             }
 
             // if square is full
-            if ($(".square td:contains(\"0\")").length == 0){
+            if ($(".square td:contains(\"0\")").length === 0){
 
                 isMergePossible = isMergePossibleFn();
                 if (!isMergePossible){
@@ -623,6 +643,6 @@
         });
 
         return this;
-    }
+    };
 
 }( jQuery ));
