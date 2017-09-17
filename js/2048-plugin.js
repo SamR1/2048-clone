@@ -24,6 +24,7 @@
         var isMergePossible = false;
         var msgWin  = "You win! <img src='img/happy.png'>";
         var msgLose = "You loose! <img src='img/sad.png'>";
+        var $tdContaining;
 
         //to get more chances to get a 2 instead of a 4
         var initValues = [2, 2, 2, 2, 2, 2, 2, 4];
@@ -32,11 +33,18 @@
             return initValues[i];
         }
 
+        function cellsContainingZero(){
+            $tdContaining = $("#squaret").find("*").filter(function() {
+                return $(this).text() === "0";
+            });
+            return $tdContaining.length;
+        }
+
         function randomPosition(){
             var x = 10; // 0 is a correct position
             var y = 10;
 
-            if ($(".square td:contains(\"0\")").length > 0) {
+            if (cellsContainingZero() > 0) {
                 while ((x === 10) ||
                 ($(".row-" + x + " .col-" + y).text() !== "0")) {
                     x = Math.floor(Math.random() * 4);
@@ -60,7 +68,8 @@
         }
 
         function isMergePossibleFn(){
-            if ($(".square td:contains(\"0\")").length === 0){
+
+            if (cellsContainingZero() === 0){
                 isMergePossible = false;
                 simulateFourKeys();
 
@@ -565,7 +574,7 @@
             }
 
             // if square is full
-            if ($(".square td:contains(\"0\")").length === 0){
+            if (cellsContainingZero() === 0){
 
                 isMergePossible = isMergePossibleFn();
                 if (!isMergePossible){
