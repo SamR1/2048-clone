@@ -60,7 +60,7 @@
         }
 
         function isMergePossibleFn(){
-            if ($(".square td:contains(\"0\")").length === "0"){
+            if ($(".square td:contains(\"0\")").length === 0){
                 isMergePossible = false;
                 simulateFourKeys();
 
